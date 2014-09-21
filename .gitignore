@@ -1,10 +1,11 @@
+cache/*
+figure/*
+Submissions/*
 *.bbl
 *.aux
 *.blg
 *.sty
 *.tag
-cache/*
-figure/*
 *.log
 *.pdf
 *.gz
