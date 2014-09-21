@@ -1,0 +1,14 @@
+*.bbl
+*.aux
+*.blg
+*.sty
+*.tag
+cache/*
+figure/*
+*.log
+*.pdf
+*.gz
+*.tex
+.Rproj.user
+.Rhistory
+.RData
