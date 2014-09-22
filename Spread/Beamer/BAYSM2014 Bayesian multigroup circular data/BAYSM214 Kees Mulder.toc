@@ -1,0 +1,12 @@
+\beamer@endinputifotherversion {3.24pt}
+\select@language {english}
+\beamer@sectionintoc {1}{What is circular data?}{2}{0}{1}
+\beamer@sectionintoc {2}{Can we analyze it?}{9}{0}{2}
+\beamer@subsectionintoc {2}{1}{Difference with linear}{9}{0}{2}
+\beamer@subsectionintoc {2}{2}{Three available methods}{19}{0}{2}
+\beamer@subsectionintoc {2}{3}{What's missing?}{39}{0}{2}
+\beamer@sectionintoc {3}{Contributions}{42}{0}{3}
+\beamer@subsectionintoc {3}{1}{von Mises distribution}{44}{0}{3}
+\beamer@subsectionintoc {3}{2}{Three algorithms}{46}{0}{3}
+\beamer@subsectionintoc {3}{3}{Results}{49}{0}{3}
+\beamer@sectionintoc {4}{Conclusion}{51}{0}{4}
