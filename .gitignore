@@ -1,6 +1,7 @@
 cache/*
 figure/*
 Submissions/*
+Datasets/*
 *.bbl
 *.aux
 *.blg
