@@ -1,6 +1,6 @@
 # This is an implementation of the MH-algorithm for the von Mises distribution.
-Sys.setenv("PKG_CXXFLAGS"="-Ic:/Boost/include/boost-1_55")
-Rcpp::sourceCpp('Data/rvmc.cpp')
+
+Sys.setenv("PKG_CXXFLAGS" = paste0("-I", getwd()))
 Rcpp::sourceCpp('DataAnalysis/MH/VMMHC.cpp')
 
 # SAMPLER ----------------------------------------------------------------

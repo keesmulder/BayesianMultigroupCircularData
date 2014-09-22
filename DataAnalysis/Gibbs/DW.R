@@ -2,7 +2,8 @@
 # Walker, 1999. A more thorough explanation of the article and this code can be
 # found in the file Explanation of Damien & Walker.
 require(Rcpp)
-Sys.setenv("PKG_CXXFLAGS"="-Ic:/Boost/include/boost-1_55")
+
+Sys.setenv("PKG_CXXFLAGS" = paste0("-I", getwd()))
 sourceCpp("DataAnalysis/Gibbs/DWC.cpp")
 
 # FUNCTION DEFINITIONS ----------------------------------------------------------------

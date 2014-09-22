@@ -1,19 +1,21 @@
 require(xtable)
 require(ggplot2)
 
-source("(3) MCMC Samplers/Gibbs/DW.R")
-source("(3) MCMC Samplers/MH/VMMH.R")
-source("(3) MCMC Samplers/Rejection/FM.R")
-source('(5) Code for analysis/analysisHelperFunctions.R')
-source("(6) Basic codes/DescribeCirc.R")
+source("DataAnalysis/Gibbs/DW.R")
+source("DataAnalysis/MH/VMMH.R")
+source("DataAnalysis/Rejection/FM.R")
+source("DataAnalysis/describeCirc.R")
+source('SimulationAnalysis/analysisHelperFunctions.R')
 
 
 # Read in data data.
-n <- 30
+n     <- 30
 kappa <- .1
-J <- 3
-i <- 4
-readfilename <- paste0(wd, "/(2) Data/Datasets", 
+J     <- 3
+i     <- 4
+
+wd <- getwd()
+readfilename <- paste0(wd, "/Data/Datasets/Datasets_",
                        "J=", J, "_n=", n, "_kap=", kappa, "/nr", i, ".csv")
 th <- read.table(readfilename, sep=",")
 
@@ -28,7 +30,7 @@ fmres <- FM(th, Q=Q)
 scale <- 1
 
 
-pdf("Examplerun.pdf", width=12*scale, height=8*scale)
+pdf("Spread/Figures/Examplerun.pdf", width=12*scale, height=8*scale)
 par(mfrow=c(2, 3))
 par(cex=1, cex.axis=1, cex.lab=1.9, cex.main=1.3, oma=c(0,3,0,0))
 
@@ -45,7 +47,7 @@ plot(setCircularRangeContinuous(fmres$mu[, 1])*(180/pi), type="l", main="Rejecti
      , ylab=""
      , xlab="", ylim=ylimmu)
 
-plot((dwres$kappa), type="l", #main="Gibbs", 
+plot((dwres$kappa), type="l", #main="Gibbs",
      ylab="kappa"
      , xlab=""
      , ylim=ylimkp

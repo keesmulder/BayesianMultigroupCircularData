@@ -1,4 +1,6 @@
-source('(4) Code for simulation/SimulationStudyVM.R')
+source('Simulation/SimulationStudyVM.R')
+
+nsim <- 10
 
 # The rejection and MH samplers are straightforward to simulate as they do not
 # require seperate values for lag for each cell.
@@ -7,40 +9,44 @@ source('(4) Code for simulation/SimulationStudyVM.R')
 Q <- 10000
 
 set.seed(105843)
-simulationStudyVM(samplername="FM",   nsim=1000, J=1, printsim=TRUE)
+simulationStudyVM(samplername="FM",   nsim=nsim, J=1, printsim=TRUE)
 
 set.seed(190362)
-simulationStudyVM(samplername="VMMH", nsim=1000, J=1, printsim=TRUE)
+simulationStudyVM(samplername="VMMH", nsim=nsim, J=1, printsim=TRUE)
 
 # J=3
 set.seed(215427)
-simulationStudyVM(samplername="FM",   nsim=1000, J=3, printsim=TRUE)
+simulationStudyVM(samplername="FM",   nsim=nsim, J=3, printsim=TRUE)
 
 set.seed(353397)
-simulationStudyVM(samplername="VMMH", nsim=1000, J=3, printsim=TRUE)
+simulationStudyVM(samplername="VMMH", nsim=nsim, J=3, printsim=TRUE)
+
+
 
 # The Gibbs sampler is given a separate lag value that was tuned to the specific
 # dataset.
 
+Q <- 10
+
 # J=1
-simulationStudyVM(samplername="DW", nsim=1000, ns=5, kappas=0.1, Q=Q, J=1,  lag=2)
-simulationStudyVM(samplername="DW", nsim=1000, ns=5, kappas=4,   Q=Q, J=1,  lag=20)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=5, kappas=0.1, Q=Q, J=1,  lag=2)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=5, kappas=4,   Q=Q, J=1,  lag=20)
 
-simulationStudyVM(samplername="DW", nsim=1000, ns=30, kappas=0.1, Q=Q, J=1,  lag=3)
-simulationStudyVM(samplername="DW", nsim=1000, ns=30, kappas=4,   Q=Q, J=1,  lag=25)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=30, kappas=0.1, Q=Q, J=1,  lag=3)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=30, kappas=4,   Q=Q, J=1,  lag=25)
 
-simulationStudyVM(samplername="DW", nsim=1000, ns=100, kappas=0.1, Q=Q, J=1,  lag=10)
-simulationStudyVM(samplername="DW", nsim=1000, ns=100, kappas=4,   Q=Q, J=1,  lag=150)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=0.1, Q=Q, J=1,  lag=10)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=4,   Q=Q, J=1,  lag=150)
 
 # J=3
-simulationStudyVM(samplername="DW", nsim=1000, ns=5, kappas=0.1, Q=Q, J=3,  lag=9, printsim=TRUE)
-simulationStudyVM(samplername="DW", nsim=1000, ns=5, kappas=4,   Q=Q, J=3,  lag=50)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=5, kappas=0.1, Q=Q, J=3,  lag=9, printsim=TRUE)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=5, kappas=4,   Q=Q, J=3,  lag=50)
 
-simulationStudyVM(samplername="DW", nsim=1000, ns=30, kappas=0.1, Q=Q, J=3,  lag=3)
-simulationStudyVM(samplername="DW", nsim=1000, ns=30, kappas=4,   Q=Q, J=3,  lag=50)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=30, kappas=0.1, Q=Q, J=3,  lag=3)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=30, kappas=4,   Q=Q, J=3,  lag=50)
 
-simulationStudyVM(samplername="DW", nsim=1000, ns=100, kappas=0.1, Q=Q, J=3,  lag=10)
-simulationStudyVM(samplername="DW", nsim=1000, ns=100, kappas=4,   Q=Q, J=3,  lag=250)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=0.1, Q=Q, J=3,  lag=10)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=4,   Q=Q, J=3,  lag=250)
 
 
 
