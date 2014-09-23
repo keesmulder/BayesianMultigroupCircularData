@@ -12,7 +12,6 @@ Datasets/*
 *.log
 *.pdf
 *.gz
-*.tex
 .Rproj.user
 .Rhistory
 .RData

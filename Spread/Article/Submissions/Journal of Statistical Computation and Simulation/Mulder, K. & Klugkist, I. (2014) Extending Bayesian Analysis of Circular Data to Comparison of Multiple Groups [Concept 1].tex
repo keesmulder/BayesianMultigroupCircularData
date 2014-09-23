@@ -1,0 +1,481 @@
+
+\documentclass[]{gSCS2e}
+
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%\usepackage{babel}
+%\usepackage[includeheadfoot,margin=2cm]{geometry}
+%\usepackage{apacite}
+\usepackage[numbers]{natbib}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{amssymb, amsmath, amsthm}
+\usepackage{amsfonts}
+\usepackage{epstopdf}
+\usepackage{genmpage}
+\usepackage{booktabs}
+\usepackage{bookmark}
+\usepackage{pdfpages}
+
+\hypersetup{
+    pdftitle={Bayesian between-subjects circular data analysis},
+    pdfauthor={Kees Tim Mulder},
+    pdfsubject={Extending Bayesian analysis of circular data to comparison of multiple groups},
+    pdfkeywords={bayesian, anova, von mises, between-subjects},   
+    bookmarksnumbered=true,     
+    bookmarksopen=true,         
+    bookmarksopenlevel=1,       
+    colorlinks=true,
+    citecolor=blue,
+    linkcolor=red,
+    urlcolor=blue,                 
+    pdfstartview=Fit,           
+    pdfpagemode=UseOutlines
+}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{example}[theorem]{Example}
+
+
+\begin{document}
+%
+%\inserttype[ba0001]{article}
+%\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+%\author{K. T. Mulder and I. G. Klugkist}{
+% \fnms{Kees T.}
+% \snm{Mulder}
+% \footnotemark[1]\ead{k.t.mulder@uu.nl}
+%and
+%  \fnms{Irene}
+%  \snm{Klugkist}
+%  \footnotemark[2]\ead{i.klugkist@uu.nl}
+%}
+
+%[Bayesian between-subjects circular data analysis]
+%\title{Extending Bayesian analysis of circular data to comparison of multiple groups}
+%
+%\maketitle
+%
+%\footnotetext[1]{
+% Utrecht University, Department of Methodology and Statistics, Utrecht, The Netherlands,
+% \href{mailto:k.t.mulder@uu.nl}{k.t.mulder@uu.nl}
+%}
+%\footnotetext[2]{
+% Utrecht University, Department of Methodology and Statistics, Utrecht, The Netherlands,
+% \href{mailto:i.klugkist@uu.nl}{i.klugkist@uu.nl}
+%}
+%\renewcommand{\thefootnote}{\arabic{footnote}}
+%
+
+%\articletype{GUIDE}
+
+\title{{\itshape{Extending Bayesian analysis of circular data to comparison of multiple groups} }}
+
+\author{K. T. Mulder$^{\rm a}$$^{\ast}$\thanks{$^\ast$Corresponding author. Email: k.t.mulder@uu.nl
+\vspace{6pt}} and I. Klugkist$^{\rm a}$\\\vspace{6pt}  $^{a}${\em{Utrecht University, Department of Methodology and Statistics, Utrecht, The Netherlands}}\\\received{v3.3 released January 2014} }
+
+%
+%\title{{\itshape Journal of Statistical Computation and Simulation} \break \LaTeX\ style guide for authors (Style 2 + NLM reference style)}
+%
+%\author{A.N. Author$^{\rm a}$$^{\ast}$\thanks{$^\ast$Corresponding author. Email: latex.helpdesk@tandf.co.uk
+%\vspace{6pt}} and I.T. Consultant$^{\rm b}$\\\vspace{6pt}  $^{a}${\em{Taylor \& Francis, 4 Park Square, Milton Park, Abingdon, UK}};
+%$^{b}${\em{Institut f\"{u}r Informatik, Albert-Ludwigs-Universit\"{a}t, Freiburg,
+%Germany}}\\\received{v3.3 released January 2014} }
+
+\maketitle
+
+
+\begin{abstract}
+Circular data are data measured in angles and occur in a variety of scientific disciplines. Bayesian methods promise to allow for flexible analysis of circular data, for which few methods are available. Three existing MCMC methods (Gibbs, Metropolis-Hastings, and Rejection) for a single group of circular data were extended to be used in a between-subjects design, providing a novel procedure to compare groups of circular data. Investigating the performance of the methods by simulation study, all methods were found to overestimate the concentration parameter of the posterior, while coverage was reasonable. The rejection sampler performed best. In future research, the MCMC method may be extended to include covariates, or a within-subjects design. 
+
+
+%\keywords{\kwd{circular data}, \kwd{Bayesian inference}, \kwd{MCMC methods},  \kwd{gibbs}, \kwd{metropolis-hastings}, \kwd{rejection sampler}}
+\end{abstract}
+
+\section{Introduction}
+
+Circular data are data measured in angles or orientations in two-dimensional space. For example, one may imagine directions on a compass ($0^\circ - 360^\circ$), times of the day ($0 - 24$ hours), or directions on a circumplex model, such as Leary's Circle \citep{Leary1957}. Circular data are frequently encountered in many scientific disciplines, such as biology, social sciences, meteorology, astronomy, earth sciences, and medicine. 
+
+The analysis of circular data requires special directional statistical methods due to the periodicity of the sample space. For example, two angles of $10^\circ$ and $350^\circ$ differ by only $20^\circ$, while if treated linearly the distance between them would seem to be $340^\circ$. A similar mismatch occurs for the arithmetic mean of $10^\circ$ and $350^\circ$, which is $180^\circ$,  while their correct circular mean is $0^\circ$. 
+
+Three different approaches for analysis of circular data are discussed in the literature: the \textit{intrinsic} approach, which uses the von Mises distribution \citep{von1918ganzzahligkeit, damien1999fullbayes}; the \textit{embedding} approach, which employs the Projected Normal distribution \citep{Nunez-Antonio2005}; and the \textit{wrapping} approach, where distributions on the real line are wrapped around the circle \citep{ferrari2009wrapping}. The intrinsic approach is the most prominent in the literature, likely because this is currently the only approach which allows calculation of maximum likelihood estimates \citep{ferrari2009wrapping}. Additionally, mapping the circular sample space to a sample space in either $\mathbb{R}^1$ (wrapping) or $\mathbb{R}^2$ (embedding) could, in some situations, lead to difficulties in parameter estimation or interpretation. Because of these reasons, the scope is limited to the intrinsic approach here. %Section \ref{tf} will establish the theoretical framework of this approach.  
+
+Due to the difficulty of working with a circular sample space, few methods have been developed in the field of analysis of circular data. An overview of available frequentist methods for analysis of circular data can be found in Fisher \cite{fisher1995statistical} and Mardia \cite{mardia1999directional}. Bayesian methods offer a promising new approach not only in the field of statistics at large, but also specifically in the analysis of circular data. Main advantages of the Bayesian approach are the flexibility of Markov chain Monte Carlo (MCMC) methods used in Bayesian analysis, the lack of asymptotic assumptions, and the possibility to incorporate knowledge from previous research. Some work has been done performing Bayesian estimation on circular data without utilising MCMC methods \citep{dowe1996bayesian}, but such methods only perform point estimation without providing standard errors, while researchers are often interested in drawing inference. 
+
+
+In the case of directional statistics, MCMC methods may prove to be a flexible solution to the difficulty of drawing inference from circular data. A limited number of MCMC methods for circular data have been developed. Available methods generally employ the von Mises distribution, which is the natural analogue of the normal distribution on the circle. Early work by Damien and Walker \cite{damien1999fullbayes} provided a Gibbs sampler for a single group by adding latent variables to the model. Metropolis-Hastings algorithms have been developed for circular distributions in general \citep{Bhattacharya2009} and for the von Mises-Fisher distribution, which is the generalization of the von Mises distribution to the sphere \citep{nunez2005bayesian}. Recent work has attempted to tune the parameters of a rejection sampling algorithm in order to obtain a computationally fast method to sample from the posterior of a von Mises distribution \citep{forbes2014fast}. Although different in approach, these methods have in common that they draw from the posterior of the von Mises distribution given one group of circular data, which can be used to describe properties of a single sample. None of the methods may be used to compare groups. 
+
+In this paper existing MCMC methods will be extended to analyse data from between-subjects designs, where the research goal is to compare mean directions of multiple groups on a circular outcome. Many tests in between-subjects designs, such as ANOVA, assume equal variance across groups. Circular ANOVA methods that have been developed in a frequentist framework also carry this assumption \citep{harrison1988development, harrison1986analysis}. A main aim of this paper is thus to extend available MCMC methods to between-subjects designs, so that the method samples multiple mean directions and a single measure of dispersion. Then, the performance of these methods will be assessed to decide which is the most commendable. 
+
+Section \ref{tf} provides the theoretical framework and notation for the von Mises distribution. Then, in Section \ref{methods}, three MCMC methods are discussed and extended to between-subjects designs. These are compared by means of a simulation study in Section \ref{simstud}. Concluding remarks will be made in Section \ref{discussion}.
+
+\section{The intrinsic approach \label{tf}}
+
+The MCMC methods discussed in this paper all fall within the intrinsic approach, where it is assumed that the data follow the von Mises distribution. This section will discuss basic properties of the von Mises distribution and provide a framework for the MCMC methods that will be discussed in Section \ref{methods}. The first four sections will be restricted to the von Mises distribution for a single group, while Section \ref{multiple} will introduce properties and notation to be used in the case with multiple groups. 
+
+\subsection{Von Mises distribution}
+
+The von Mises distribution is a symmetric unimodal distribution, which is given by
+%$$ f(\theta \vert \mu, \kappa) = \frac{ \exp\{\kappa \cos(\theta - \mu)\}}{2 \pi I_0(\kappa)}, ~~~~~ 0\leq \theta < 2\pi, \kappa \geq 0$$
+$$ \textnormal{VM}(\theta \vert \mu, \kappa) = \{2 \pi I_0(\kappa)\}^{-1} \exp\{\kappa \cos(\theta - \mu)\} , ~~~~~ 0\leq \theta < 2\pi, \kappa \geq 0$$
+where $\theta$ represents the data, $\mu$ represents the mean direction, $\kappa$ is the concentration parameter, and $I_0(\cdot)$ is the modified Bessel function of order 0 \citep{abramowitz1972handbook}. A higher $\kappa$ represents less variation, and thus more concentrated data. Let $\boldsymbol\theta=(\theta_1, \dots, \theta_n$) be a sample of angular measurements $\theta_i$ of size $n$%, where each $\theta_i$ is usually measured in radians
+.
+
+Each angle in the dataset may be viewed as a vector of length 1 in direction $\theta_i$. As illustrated in Figure \ref{exampleRMu}, the summation of these vectors results in a vector in direction $\bar{\theta}$ of length $R$. $\bar{\theta}$ is an unbiased estimator of $\mu$, while $R$ is called the resultant length and may be obtained from
+$$ R = \sqrt{\left(\sum_{i=1}^{n} \cos \theta_i \right)^2 + \left(\sum_{i=1}^{n} \sin \theta_i \right)^2},$$
+which increases with concentration and sample size. The mean resultant length can be computed as $\bar{R} = R/n$, which is a metric of concentration independent of the sample size. % $\bar{\theta}$ can be obtained from $R\cos\mu = \sum_i \theta_i$
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.7\linewidth, clip, trim=4cm 3cm 3cm 2cm]{ExampleRMu.pdf}
+\caption{Illustration of the mean direction and resultant length of  $\boldsymbol\theta=\{56^\circ, 77^\circ, 344^\circ\}$. The summation of the vectors results in a vector of length $R$ in direction $\bar{\theta}$.}
+\label{exampleRMu}
+\end{figure}
+
+%$\bar{R} = R/n$ then gives a measure of spread in the range $(0, 1)$, where 0 denotes data distributed uniformly around the circle and 1 describes data concentrated at a single point. 
+
+\subsection{Prior distribution} \label{prior}
+
+Guttorp and Lockhart \cite{guttorp1988finding} present a conjugate prior for the von Mises distribution. It is given up to a constant of proportionality by 
+%$$ p(\mu, \kappa) \propto \frac{\exp\{R_0 \kappa \cos (\mu - \mu_0)\}  } {I_0 (\kappa) ^{c}} ,$$
+$$ p(\mu, \kappa) \propto  I_0 (\kappa) ^{-c} \exp\{R_0 \kappa \cos (\mu - \mu_0)\}  ,$$
+which represents $c$ observations with prior mean direction $\mu_0$ and prior resultant length $R_0$. In all methods applied in this paper, this conjugate prior will be used. 
+
+\subsection{Posterior distribution} \label{posterior}
+To obtain the posterior distribution, the data and the prior are combined to obtain the posterior mean $\mu_n$\footnote{In  R \citep{team2013r}, calculation of $\mu_n$ is readily available in \texttt{atan2($S_n$, $C_n$)}.} and the posterior resultant length $R_n$ by
+$$ C_n = R_0 \cos \mu_0 + \sum_{i=1}^n \cos \theta_i, ~~~~ S_n = R_0 \sin \mu_0 + \sum_{i=1}^n \sin \theta_i,$$
+$$  \mu_n = \left\{ 
+  \begin{array}{l l}
+   \tan^{-1} (S_n/C_n)        & \quad \textnormal{if}~ \text{$C_n > 0, S_n > 0$}\\
+   \tan^{-1} (S_n/C_n) + \pi  & \quad \textnormal{if}~ \text{$C_n < 0$}\\ 
+   \tan^{-1} (S_n/C_n) + 2\pi & \quad \textnormal{if}~ \text{$C_n > 0, S_n < 0$}
+  \end{array} \right.$$
+and
+$$ R_n = \sqrt{C_n^2 + S_n^2}.$$
+
+% = \frac{S_n}{\sin \mu_n} = \frac{C_n}{\cos \mu_n}.$$ 
+
+Then, the joint posterior distribution is given up to a constant of proportionality, by
+$$ f(\mu, \kappa \vert \boldsymbol\theta) \propto \{I_0 (\kappa) \}^{-m} \exp\{R_n \kappa \cos (\mu - \mu_n)\}, $$
+where $m = n + c$. This distribution is not of closed form due to the Bessel function. 
+
+
+\subsection{Conditional distributions \label{distpar}}
+
+The MCMC methods presented in Section \ref{methods} are based upon the conditional posterior distributions $f(\mu \vert \kappa, \boldsymbol\theta)$ and $f(\kappa \vert \mu, \boldsymbol\theta)$. The conditional posterior distribution of $\mu$, up to a constant of proportionality, is given by
+$$f(\mu \vert \kappa, \boldsymbol\theta) \propto \exp\{R_n \kappa \cos(\mu - \mu_n)\},$$
+which is the kernel of a von Mises distribution with mean direction $\mu_n$ and concentration parameter $R_n\kappa$. %This is analogous to the distribution of the mean $m$ of a Normal distribution  $N(m, \sigma^2)$, which is $N(m, \frac{\sigma^2}{\sqrt{n}})$. 
+Several straightforward methods to sample data from the von Mises distribution are available \citep{best1979efficient, fisher1995statistical}. 
+
+The conditional distribution of $f(\kappa \vert \mu, \boldsymbol\theta)$, is given by $$ f(\kappa \vert \mu, \boldsymbol\theta) \propto \{ I_0(\kappa) \} ^{-m} \exp\{R_n \kappa \cos(\mu - \mu_n)\}. $$
+However, it is not straightforward to sample from this conditional distribution, so that special methods are required. In Section \ref{methods}, three methods that can sample the concentration parameter will be discussed. 
+
+\subsection{Notation for multiple groups \label{multiple}}
+
+Here, basic notation and properties will be defined that will be used to extend the methods discussed in Section \ref{methods} to multiple groups. Denote the groups by $j=1, \dots, J$. Then, for group $j$, the posterior mean is denoted by $\mu_{nj}$ and the posterior resultant length by $R_{nj}$. The sample size of group $j$ is denoted by $n_j$, which will be combined with the prior property $c_j$ to obtain $m_j = n_j + c_j$. Finally, let $$ R_t = \sum_{j=1}^{J} R_{nj} ~~\textnormal{and} ~ m_t = \sum_{j=1}^{J} m_j.$$
+
+Utilising this notation, the posterior for multiple groups with a common $\kappa$ is given by $$f(\boldsymbol{\mu}, \kappa \vert \boldsymbol\theta) \propto \{I_0 (\kappa) \}^{-m_t} \exp \left[ \kappa \sum_{j=1}^{J} R_{nj} \cos (\mu_j - \mu_{nj})\right], $$ where $\boldsymbol{\mu} = (\mu_{1}, \dots, \mu_{J})$ denotes the mean directions of the groups. 
+
+
+\section{Available methods and their extensions \label{methods}}
+
+%The literature provides several approaches to sample from the posterior distribution of the concentration parameter $\kappa$ of the von Mises distribution. %Current methods assume that inference is required for a single sample of circular data. In practice, however, researchers often want to compare several groups of data, and test whether these groups differ. If one were to apply the current methods to this type of data, a separate mean direction $\mu$ and concentration parameter $\kappa$ would be sampled for each group. However, researchers usually assume equal variances (or, equivalently, concentrations) in between-subjects designs. The current methods are unable to sample parameters under this model. 
+In this section, three MCMC methods will be presented and extended to be able to sample from the posterior of a von Mises distribution in a between-subjects design with $J \geq 1$ independent groups with common but unknown $\kappa$. Importantly, all three methods use the conjugate prior as described in Section \ref{prior}. %Thus,  $\mu_n, R_n$ and $m$ as used in each of the given methods are calculated as in Section \ref{posterior}. % Then, let $\mu_{nj}, R_{nj}$ and $m_j$  denote $\mu_n, R_n$ and $m$ respectively for group $j = 1,  \dots, J$. Thus, $\mu_{nj}$ can be seen as the posterior mean, $R_{nj}$ as the posterior resultant length, and $m_j$ as the posterior sample size, for group $j$.
+
+%First, in Section \ref{dw}, a Gibbs sampler is discussed. Section \ref{vmmh} employs the general Metropolis-Hastings algorithm. Finally, a recent rejection sampling algorithm is extended in Section \ref{fm}.
+
+\subsection{A Gibbs sampler using latent variables  \label{dw}}
+
+In one of the earliest attempts at sampling the concentration parameter of the von Mises distribution, Damien and Walker \cite{damien1999fullbayes} provide a Gibbs sampler that only requires sampling of uniform random variates. It is an application of the procedure of adding latent variables to a posterior distribution in order to be able to apply Gibbs samplers in situations where this may not have been feasible originally \citep{damlen1999auxiliary}. 
+
+Although the relative simplicity of the Gibbs sampler usually is appealing, it has been noted that this sampler shows high autocorrelation for more concentrated data, causing slow convergence \citep[p. 990]{nunez2005bayesian}. %It will be seen later that it is actually a combination of higher sample sizes and more concentrated data causing undesired levels of autocorrelation.
+
+Damien and Walker \cite{damien1999fullbayes} add latent variables $w, v, x,$ and $u=(u_1, u_2, \dots)$ to the joint posterior density $f(\mu, \kappa \vert \boldsymbol\theta)$, where $u$ is an infinite set of latent variables. It is not necessary to sample an infinite number of values for $u_k$, as computing values for $u_k$ up to some sufficient $k$ provides a good approximation of the correct solution. Let $Z$ be the number of values of $u_k$ that will be sampled, so that the set of sampled values is $u_1, \dots, u_Z$. For each analysis performed with this method, a value for $Z$ must be chosen. This is a disadvantage of this method, because setting $Z$ too high will prove computationally intensive, while setting $Z$ too low produces biased results. 
+
+Another disadvantage is that this method requires setting starting values  not only for $\mu$ and $\kappa$, but also for $w$. However, $w$ does not have an intuitive interpretation, making the choice of a starting value somewhat arbitrary and possibly difficult. %In the following section, the extension to multiple groups will be described.
+
+\subsubsection{Sampler for a single group}
+
+The posterior density of a single group, after inclusion of the latent variables, is given up to a constant of proportionality as
+\begin{multline*}
+ f (\mu, \kappa, w, v, u, x \vert \boldsymbol\theta)  \propto e^{-R_n \kappa} I(v < e^{R_{n} \kappa \{1+\cos(\mu - \mu_n)\}}, x < w^{m-1}) \times \\ 
+ \left( e^{-w} \prod_{k=1}^{\infty} I(u_k < e^{-w\lambda_k\kappa^{2k}}) \right),
+ \end{multline*}
+for which the marginal for $(\mu, \kappa)$ is $f(\mu, \kappa \vert \boldsymbol\theta)$, as required. The Gibbs sampler works by drawing a value from the conditional distributions of $x, v, \mu, u_k, w$ and $\kappa$ in sequential order, each conditional on the current other values. Further details, including the required conditional distributions, are found in Damien and Walker \cite{damien1999fullbayes} and will not be given here, as the Gibbs sampler for a single group is a special case of the Gibbs sampler described next with $J=1$. 
+
+\subsubsection{Sampler for multiple groups \label{gibbsmulti}}
+
+This section will describe the adapted procedure to implement the Gibbs sampler for multiple groups, so that it will sample from the posterior density $f(\boldsymbol\mu, \kappa, w, v, u, x \vert \boldsymbol\theta)$. It differs in two ways from the sampler provided in Damien and Walker \cite{damien1999fullbayes}: first, means for multiple groups and a common $\kappa$ are now sampled, and second, some steps were combined or simplified to facilitate implementation. Notably, the sampling of a set of values $u_1, \dots, u_Z$ is rewritten to sample another set of values $N_1, \dots, N_Z$. The extended Gibbs sampler consists of the following 8 steps:
+%Here, we also introduce the latent variables  $w$, $v$, $x$, and $u$. Computationally however, drawing from each conditional distribution of $u_k$ can be replaced by drawing values from an exponential distribution \citep{damien1999fullbayes}. 
+
+\begin{enumerate}
+
+
+
+\item Set $\boldsymbol\mu, \kappa,$ and $w$ to their starting values.  
+
+\item  Draw a random variate $\tau$ from $U(0, 1)$. \label{firstgibbsstep}
+
+\item  For each group $j$, draw a value for $\mu_j$ from $U(\mu_{nj} - \cos^{-1}g,~ \mu_{nj} + \cos^{-1}g),$ where $$ g=\max\left[-1, \frac{\ln \tau}{R_t \kappa} + \frac{\sum_{j=1}^{J} R_{nj} \{ 1 + \cos (\mu_j - \mu_{nj} ) \} } {R_t} - 1 \right]. $$
+
+\item Calculate $ M = \tilde{w} + E,$ where $\tilde{w}$ is the current value of $w$ and $E$ is a random variate drawn from an exponential distribution with rate $I_0(\kappa) - 1$.
+
+\item  Draw a new value for $w$ from $e^{-w} I(\tilde{w}r^{1/(m-1)} < w < M)$, where $r$ is a uniform random variate from $U(0,1)$. 
+
+\item Compute $ N_k = \kappa (1 + F_k)^{1/(2k)},$ where $F_k$ is an exponential r.v. with rate $\tilde{w}(k!)^{-2} (0.5\kappa )^{2k},$ and $k = 1, \dots, Z$. Set $N = \min N_k$. For advice on setting $Z$, see Section \ref{k}. \label{alg:Nkselection} 
+
+\item  Draw a value for $\kappa$ from $e^{-R_n\kappa} I( \max\{0, v_n\} < \kappa < N),$ where $$ v_n = \frac{\ln \tau}{\sum_{j=1}^{J} R_{nj} \{1+\cos(\mu_j - \mu_{nj}) \} } + \kappa.$$ \label{lastgibbsstep}
+
+\item Repeat steps \ref{firstgibbsstep} - \ref{lastgibbsstep} until a sufficient number of samples have been obtained.
+
+\end{enumerate}  
+
+
+\subsubsection{Choosing $Z$ \label{k}}
+
+In step \ref{alg:Nkselection} of the procedure given above to draw from the conditional density of $\kappa$, a number of samples $N_k$ are generated of which the smallest is retained. However, the number of $N_k$  that should be sampled (here denoted by $Z$) was not discussed in Damien and Walker \cite{damien1999fullbayes}. A small simulation study was performed to be able to give guidelines for setting $Z$ when applying this algorithm. 
+
+For each combination of sample sizes $\{5, 30, 100\}$ and concentrations $\{0.1, 1, 4, 8\}$, 100 datasets with $J=1$ and $J=3$ were generated. The Gibbs sampler was then run for 10000 iterations with no lag and a burn-in of 500 on each dataset, with $Z$ set to 85. In each iteration, the index number $k$ of the selected (smallest) value for $N_k$ was saved. This resulted in 100 chains (one for each dataset) of chosen index number $k$ of 10000 iterations. Then, the overall maximum value of these chains was taken. The reasoning behind this is that if in all these iterations the chosen value never exceeds some number, setting $Z$ to that number or slightly above it will ensure that $Z$ is not too low to produce bias while still remaining somewhat computationally efficient. 
+
+
+\begin{table}[tb]
+\centering
+\caption{Maximum $k$ that was picked out as the smallest value after 10000 iterations of the Gibbs sampler applied to 100 datasets for different sample sizes ($n$), concentration ($\kappa$) and number of groups $(J)$.}
+\label{tab:sufficientk}
+\begin{tabular}{c@{\hskip 1.0cm}cccc@{\hskip 0.7cm}ccc}
+  \toprule 
+  & & $J=1$ & & & & $J=3$ & \\ 
+   \cmidrule{2-4}
+ % & \multicolumn{3}{c}{Sample size} & & \multicolumn{3}{c}{Sample size} \\ 
+  $\kappa$ & $n=5$ & $n=30$ & $n=100$ & & $n=5$ & $n=30$ & $n=100$ \\ 
+  \hline 
+ 0.1 & 11 & 5 & 5 &  & 7 & 5 & 5 \\ 
+  1 & 14 & 6 & 6 &  & 8 & 5 & 6 \\ 
+  4 & 25 & 10 & 8 &  & 14 & 8 & 8 \\ 
+  8 & 25 & 12 & 11 &  & 14 & 9 & 7 \\ 
+   \bottomrule 
+\end{tabular}
+\end{table}
+
+From the results, given in Table \ref{tab:sufficientk}, it is apparent that a value for $Z$ of about $25$ should be sufficient in most applications, assuming the data is not strongly concentrated. The required $Z$ decreases with higher sample sizes and less concentrated data.
+
+
+
+\subsection{A Metropolis-Hastings sampler \label{vmmh}}
+
+Another approach is to employ the Metropolis-Hastings (MH) method \citep{metropolis1953equation, hastings1970monte} to sample from the posterior of a von Mises distribution. Usually, MH algorithms are slower and encounter more autocorrelation and convergence problems than Gibbs samplers. However, considering the complicated nature of adding latent variables in the Gibbs sampler described above, an MH method may be advantageous. Another advantage is that the algorithm is reasonably straightforward. On the other hand, this method depends on a proper choice for the proposal density, which may limit its use.
+
+%In order to apply this method to our model, the log-likelihood $\ell(\kappa \vert \boldsymbol{\mu}, \boldsymbol\theta)$ is required.
+
+\subsubsection{Sampler for a single group}
+
+%The likelihood of the von Mises distribution using a single mean direction is given by
+%$$ \mathcal{L}(\boldsymbol\theta, \mu, \kappa) = \{2\pi I_0(\kappa)\}^{-n} \exp\left[\kappa \sum_{i=1}^{n} \cos( \theta_i - \mu)\right]. $$
+%A the prior can be specified as in Section \ref{prior}, which can be multiplied with the likelihood to obtain the posterior to be sampled from.
+To apply the sampler for a single group, samples are needed for a single $\mu$ and $\kappa$. The conditional distribution of the mean direction $\mu$ is known and is easy to sample from using a Gibbs step. The conditional distribution of $\kappa$ is known but difficult to sample from, which will be solved by applying an MH step. 
+
+For the MH step, two main ingredients are required: the posterior from which samples are required, and a proposal density from which it is straightforward to sample. The conditional posterior $f(\kappa \vert \mu, \boldsymbol\theta)$ is given in Section \ref{distpar}. As a proposal, which must be non-negative, the $\chi^2$-distribution will be used. The full algorithm will not be presented here as it is a special case with $J=1$ of the sampler described next. 
+
+\subsubsection{Sampler for multiple groups \label{MHmulti}}
+
+The MH sampler for multiple groups may employ the posterior $f(\boldsymbol\mu, \kappa \vert \boldsymbol\theta)$ as given in Section \ref{multiple}. However, in order to prevent underflow issues, the natural logarithm of the posterior is used, which is $$ \ln f(\boldsymbol{\mu}, \kappa \vert \boldsymbol\theta) = - m_t  \left[  I_0(\kappa)\right] +  \kappa \sum_{i=1}^{n} R_{nj} \cos(\mu_{j} - \mu_{nj}). $$ 
+
+Let $\kappa_{cur}$ be the current value of $\kappa$, and $\chi^2(x \vert h)$ be the chi-square distribution with $h$ degrees of freedom. Then, the MH method is given by the following \ref{finalmhstep} steps:
+
+
+\begin{enumerate}
+\item Set $\kappa_{cur}$ to its starting value.
+\item For each group $j$, draw a value $\mu_{j}$ from $\textnormal{VM}(\mu_{j} \vert \mu_{nj}, R_n\kappa_{cur})$. \label{beginmhloop}
+\item Draw a candidate $\kappa_{can}$ from $\chi^2(\kappa_{can} \vert \kappa_{cur})$. 
+\item Calculate the MH ratio as 
+\begin{align*}
+a = ~& \ln f(\kappa_{can} \vert \boldsymbol{\mu}, \boldsymbol\theta) + \ln  \chi^2(\kappa_{cur} \vert \kappa_{can}) \\
+   - & \ln f(\kappa_{cur} \vert \boldsymbol{\mu}, \boldsymbol\theta) - \ln \chi^2(\kappa_{can} \vert \kappa_{cur}),
+\end{align*}
+where $\boldsymbol\mu = \mu_1, \dots, \mu_J,$ a vector of current values of $\mu$ for each group.
+\item Draw a value $u$ from $U(0,1)$. 
+\item If $a > \ln u $, set $\kappa_{cur} = \kappa_{can}$. Elsewise, remain at $\kappa_{cur}$. \label{endmhloop}
+\item Repeat step \ref{beginmhloop} - \ref{endmhloop} until a sufficient number of samples have been obtained. \label{finalmhstep}
+\end{enumerate}
+
+
+\subsection{A rejection sampler \label{fm}}
+
+In a recent paper, \citet{forbes2014fast} presented a promising new algorithm to sample from the conditional posterior $f(\kappa \vert \mu, \boldsymbol\theta)$. The approach is largely focused on computational speed, and was motivated by the fact that plugging a Bessel function approximation into the von Mises posterior leads to a Gamma distribution.
+
+First, the algorithm sets $\eta = n$ and computes $\beta_0 = - n^{-1} \sum_{i=1}^{n} \cos(\theta_i - \mu)$. These are then used to compute the approximately optimal parameters for a Gamma proposal, such that the probability of rejection is minimized. In the rejection step, a candidate for $\kappa$ is then repeatedly drawn from this Gamma proposal density until it is accepted. 
+
+Samples of $\mu$ are drawn outside of the algorithm, which may be done easily as in step \ref{beginmhloop} of the MH procedure in Section \ref{MHmulti}. As with the MH method, only $\kappa$ requires a starting value. 
+
+\subsubsection{Sampler for a single group}
+
+In their paper, \citet{forbes2014fast} describe the rejection sampler for a single group of data, using a constant prior. The conjugate prior that is preferred here can be added as described below. 
+
+Using the sample mean direction $\bar{\theta}$, it can be shown that
+$$ \beta_0 = - n^{-1} \sum_{i=1}^{n} \cos(\theta_i - \mu) = - \frac{R\cos (\mu - \bar\theta) }{n}.$$
+This relation to the resultant length means that $\mu_n, R_n,$ and $m$ from the desired posterior can be plugged into the formula for $\beta_0,$ to obtain
+$$\beta_n = - \frac{R_{n} \cos (\mu - \mu_{n})}{m}.$$
+Then, the rejection algorithm can be applied exactly as given in \citet{forbes2014fast}, using $\beta_n$ instead of $\beta_0$ and $\eta = m$.
+
+\subsubsection{Sampler for multiple groups}
+
+As the sampling of means occurs outside of the main algorithm, it is straightforward to sample separate means for each group. However, the common $\kappa$ depends on the sampled means through $\beta_n$. After computation of $\beta_n$, the rejection algorithm no longer uses the data $\boldsymbol\theta$ or the current value of $\mu$. The sampler will thus be extended to multiple groups by once again rewriting $\beta_n$. 
+
+Using $R_{nj}$ and $\mu_{nj}$, and $m_t$ as before, let
+$$\beta_t = -  \frac{\sum_{j=1}^{J} R_{nj} \cos (\mu - \mu_{nj})}{m_t}.$$
+Then, the rejection algorithm can be applied using $\beta_t$ instead of $\beta_0$ and $\eta = m_t$.
+
+
+
+
+\section{Simulation study \label{simstud}}
+
+In the previous section, three distinct methods to sample from the posterior of the von Mises distribution with multiple groups were shown. In this section, these three methods will be evaluated on their performance and efficiency. 
+
+\subsection{Methods}
+
+\begin{figure}[bt]
+\centering
+\includegraphics[width=\textwidth]{Examplerun.pdf}
+\caption{Example chains of $\mu$ (in degrees) and $\kappa$ drawn in the first 500 iterations of each of the three methods, with no burn-in and without thinning the chain, where $J = 3$, true $\kappa = 0.1,$ and $n_j = 30$.}
+\label{example}
+\end{figure}
+
+All three methods were implemented in C++ within R \citep{team2013r} via Rcpp \citep{rcpp}. To illustrate the differences between the three methods, Figure \ref{example} shows example chains of the first 500 iterations for each of the three methods. It can be seen that the Gibbs sampler has large autocorrelation and slow convergence, that the MH algorithm can have low acceptance probability but converges fast, and that the rejection algorithm converges fast and mixes well. 
+
+The three sampling methods were applied to various scenarios, which differed in the following three properties. First, the samplers  analyzed both a single group of data ($J=1$) and three groups of data ($J=3$). Second, sample sizes of 5, 30 and 100 were used. For $J=3$, this sample size denotes the sample size per group ($n_j$), making the total sample size $3n_j$. Third, values for the concentration parameter $\kappa$ were 0.1, 4 and 32. Because the multiple groups are assumed have equal $\kappa$, all three groups of data were sampled given the same true $\kappa$. These manipulations resulted in a 3x2x3x3 simulation study design, for a total of 54 cells. For $J=1$, the true mean was set at $20^\circ$, while true means for $J=3$ were set at $20^\circ, 40^\circ,$ and $60^\circ$.
+
+For each cell, a thousand datasets were generated, each of which was analyzed with each sampler. Burn-in and lag (that is, how much the chain will be thinned) were set to appropriate values (see Section \ref{convergence}), after which the first 10000 retained iterations of both $\boldsymbol\mu$ and $\kappa$ were saved. Although all three methods allow inclusion of prior information, a non-informative prior was used throughout the simulation study by setting $\mu_0=0, R_0=0,$ and $c=0$. Each method requires a starting value for $\kappa$, which was set to 2 in all cases. The Gibbs sampler required additional starting values for $\mu$ and $w$, which were set at 0 and 4 respectively, regardless of sample size or $\kappa$. Additionally, for the Gibbs sampler an appropriate $Z$ must be chosen (see Section \ref{k}), which was set to $85$ throughout this study. 
+
+\subsection{Convergence} \label{convergence}
+
+As convergence is achieved at a different number of iterations for each of the methods, several runs of each were assessed for each cell in order to assess convergence and required burn-in and lag, which were then set correctly for the simulation study. 
+
+The Gibbs sampler performed adequately for small samples with large dispersion. For example, a single group of 5 datapoints with true $\kappa = 0.1$ produced a reasonable sample from the posterior using a lag of 2, which means saving every other iteration. With larger sample sizes and more concentrated data, the autocorrelation increases quickly, requiring a lag of 250 for $\kappa = 4$ and $n_j = 100$ with $J=3$. For values of $\kappa$ above about 7, application of the Gibbs sampler simply becomes unfeasible, so results for the Gibbs sampling method with true $\kappa=32$ are not reported. 
+
+The MH algorithm fared much better, converging quickly in all tested situations. However, applying MH methods requires reasonable acceptance rates, which can be computed by $Q_{acc}/Q$, where $Q_{acc}$ is the number of accepted iterations, and $Q$ is the total number of iterations. \citet{johnson1999ordinal} suggest an acceptance rate of about 50\% to be ideal. A low acceptance rate may suggest a badly fitting proposal density, while a high acceptance rate (ie. close to 1) may suggest that the algorithm has yet to converge properly. As convergence was assessed seperately and achieved quite quickly, only too low acceptance rates were of concern here. Acceptance rates were lower for larger sample sizes and less concentrated data. For example, for a single group of data with $n=100$ and $ \kappa=.1$ the average acceptance rate was .1, while for $n=30, \kappa=32$ the acceptance rate was as high as .71. One exception to this pattern was found: the smaller sample size for $n=5, \kappa=32$ should mean this cell would have an even higher acceptance rate than .71, but it was in fact lower at .55. The small sample size causes large differences in the concentration between datasets, so that this cell contains some extremely concentrated datasets. Acceptance rates of the MH algorithm were very low for these extreme concentrations. 
+
+The rejection algorithm converged immediately and showed almost no autocorrelation. An acceptance rate can be computed by $Q/Q_{can}$, where $Q$ is the total number of accepted candidates, which was chosen beforehand as the desired number of iterations, and $Q_{can}$ is the total number of candidates, including those that were accepted. The algorithm rejected no more than 5\% of the candidates in any case, which is even closer to 1 than the expected acceptance probabilities as given in \citet{forbes2014fast}. 
+
+\renewcommand{\footnoterule}{%
+  \kern -3pt
+  \hrule width \textwidth height 0pt
+  \kern 2pt
+}
+
+%\begin{table}
+%\begin{center}
+%\begin{minipage}{0.86\textwidth}
+%\caption{Average of posterior properties over 1000 replications for $J=1$, with true $\mu = 20^\circ$, for different sample sizes $(n)$ and concetration $\kappa$.}
+%\label{J1}
+%\input{C:/Dropbox/Masterthesis/Writing/Kees/Thesis/j1table.tex}
+%\vspace{-0.3cm}
+%\end{minipage}
+%\end{center}
+%\end{table}
+
+
+
+
+\subsection{Mode estimation for $\kappa$ \label{hdimode}}
+
+Estimating $\kappa$ as the mean or the median of the posterior sample may lead to biased results, as $\kappa$ is non-negative and has a right-skewed distribution. For skewed distributions, the mode usually provides the least biased estimate. An estimate of the mode can be obtained by using the Highest Density Interval (HDI), which is the shortest interval containing a certain percentage of the data \citep{venter1967estimation}. Here, the mode was estimated to be the midpoint of the 10\% HDI. 
+
+\subsection{Results}
+
+In Table \ref{J1} and \ref{J3}, results are displayed for a single group and three groups, respectively. As mentioned before, applying the Gibbs sampler to a situation with $\kappa=32$ is unfeasible, and therefore these rows are left empty. 
+
+The column below posterior $\mu$ mean gives the average of the posterior mean of $\mu$ or $\{\mu_1, \mu_2, \mu_3 \}$ of all replications. The coverage of the mean denotes the proportion of replications where 95\% Central Credible Interval (CCI) contained the true $\mu$. For $J=3$, this coverage was averaged over the three means. The desired value of the coverage is .95. For the posterior $\kappa$, the estimated mode for each replication was saved, as well as the 95\% HDI. The average of the mode over replications is provided in the column posterior $\kappa$ mode, followed by the posterior $\kappa$ coverage, which denotes the propotion of replications for which the true value fell within the 95\% HDI. The last two columns provide the acceptance rate and the mean computation time (MCT) per replication in seconds. 
+
+The true value of a parameter often influences the size of the bias. In order to investigate by what factor estimates are off, the relative bias can be calculated as $Bias/True~value$. The relative bias may help facilitate interpretation of relative severity of bias for $\kappa$, in order to allow for more accurate comparisons between cells. 
+
+\subsubsection{A single group}
+\noindent \textbf{Posterior $\mu$}
+
+All three methods provided similar results for the posterior mean, which was generally close to the true mean. Estimates were closer to the true value for increasing $n$ and increasing $\kappa$. The worst case was found for $\kappa=0.1, n=5$, where the difference between the true $\mu$ ($20^\circ$) and average posterior $\mu$ was as high as $8^\circ$. However, this difference is most likely due to sampling error of datasets instead of an issue with the MCMC methods. When $\kappa=0.1$, the distribution of the sample mean direction $\bar{\theta}$ is close to the circular uniform distribution, so that the average over the sample mean directions shows some random variation. This is supported by the fact that the MCMC methods all show the same difference from the true value. In general, there seems to be no systematic bias in the estimation of the mean direction. 
+
+Coverage was generally adequate as well. Coverage for $\mu$ relies on correct procedures of sampling both $\mu$ and $\kappa$. For example, an upwards bias in $\kappa$ results in a lower coverage for $\mu$. Sampling methods for the distribution of $\mu$ are well-known and as such most likely correct, and thus deviations of the coverage from .95 are likely due to a deficient mechanism to sample $\kappa$, as the current value of $\kappa$ is used in the distribution of $\mu$.
+
+
+
+% Posterior Kappa
+\vspace{0.3cm}
+\noindent \textbf{Posterior $\kappa$}
+
+The mode of $\kappa$ shows a systematic upward bias for all cells and all methods. The relative bias is worse for smaller $\kappa$ and thus more dispersed data. The bias also decreases with increasing $n$ and nearly disappears for $n = 100$. 
+
+Regardless of the observed bias, coverage for $\kappa$ was generally acceptable, fluctuating around .95 for all methods. One exception was the MH algorithm with $n=5, \kappa=32$, which performed particularly badly with an average mode for $\kappa$ of 133.12 and a coverage of .64. In this condition, many datasets have very high estimated concentrations, which the MH algorithm does not handle well. The rejection algorithm performed much better in this case, providing an adequate coverage of .96 even though the results were still strongly biased with the average estimate of $\kappa$ at 55.74. 
+
+% MCT
+\vspace{0.9cm}
+\noindent \textbf{Mean Computation Time}
+
+The final column denotes the computational time for the algorithms as implemented in C++ via Rcpp, which was averaged over all replications. As with previous results, the Gibbs sampling method performed worst by far. Its computational time increased as more lag was required, which occured with higher sample sizes and concentration. The longest reported time was 59.03 seconds per replication. The computation time for the MH algorithm was independent of $\kappa$, but it did depend on $n$, becoming slower with increasing sample size, although the maximum time a replication took was only about .2 seconds. The rejection algorithm was very fast, as expected, and its computational time was independent of both sample size and $\kappa$, so that it never took more than .05 seconds for a replication. 
+
+
+
+
+\subsubsection{Multiple groups}
+
+
+%
+%\begin{table}
+%\centering
+%\begin{minipage}{1.02\textwidth}
+%\caption{Average of posterior properties over 1000 replications for $J=3$, with true means $\mu_1 = 20^\circ$, $\mu_2 = 40^\circ$, $\mu_3 = 60^\circ$, for different samples sizes per group $(n_j)$ and concentration $(\kappa)$.} 
+%\label{J3}
+%
+%\input{C:/Dropbox/Masterthesis/Writing/Kees/Thesis/j3table.tex}
+%
+%\vspace{-0.3cm}
+%\end{minipage}
+%\end{table}
+%
+
+In Table \ref{J3}, results for analysis of multiple groups of data are shown. For the posterior group means the observed pattern was similar to the single group case. Mean directions for cells with low concentration and small sample size showed unsystematic bias, which likely occured due to sampling error of the datasets. The Gibbs sampler showed coverage for the posterior $\mu$ that was too low in all cells. For both the MH and rejection method, coverage of $\mu$ was generally adequate with the exception of $n_j=5, \kappa=.1$ and $n_j=30, \kappa=.1$, for which coverage was observed to be too low. As explained previously, this is likely due to a lacking mechanism to sample $\kappa$. 
+
+
+
+
+\begin{figure}[bt]
+\includegraphics[width=\textwidth]{Coverages.pdf}
+\caption{Coverages of $\kappa$ for different sample sizes $(n)$ and concentration $(\kappa)$, all with $J=3$.}
+\label{coverage}
+\end{figure}
+
+
+%As before, $\kappa$ was systematically overestimated. With $J=3$, the bias in the estimation of $\kappa$ decreased for all cells, most likely due to the increasing total sample size. and the coverages were adequate in most cases. Differences between $J=1$ and $J=3$ will be discussed next. 
+
+As with $J=1$, a systematic bias was observed in $\kappa$ for all methods, in particular for $n_j=5$. For $n_j=30$ and $n_j=100$ much less bias was observed. Figure \ref{coverage} shows the coverages of $\kappa$ per method for different sample sizes and concentration, with $J=3$. Coverages for $\kappa$ were adequate, although the Gibbs sampler once again performed badly.  The MH and rejection sampler did perform well, although the rejection method seemed slightly more prone to coverages that are too high. These coverages in the range .95-1 indicate that the HDI would be chosen too wide so that the true value falls within the HDI more often than expected. Finally, computational time increased slightly with three groups for all methods.
+
+
+
+\section{Discussion \label{discussion}}
+
+This paper presented three different MCMC approaches for Bayesian estimation of the mean directions $\mu_j$ of multiple groups of circular data with common but unknown concentration $\kappa$. These approaches were based on existing knowledge on Bayesian analysis of circular data that which could be used for analysis of a single group of circular data. Additionally, a systematic investigation of the performance of the three approaches was performed. 
+
+Comparing the methods, clear differences became apparent. The Gibbs sampler encountered many problems, among which were bias, undesirable coverages, long computational time, and complexity in application. The MH method performed adequately, but it does not show desirable acceptance rates for large datasets with small concentration when using the current $\chi^2$ proposal density. In addition, it did not seem to handle extremely concentrated data well. The rejection algorithm by \citet{forbes2014fast} was found to be the most promising of the MCMC-methods available in the literature at present, due to fast computational speed, fast convergence and adequate coverage.
+
+The model developed here is still limited in terms of scope; it provides a basic between-subjects design for multiple groups of circular data, but extensions of this model such as a between-within-design or the inclusion of covariates have yet to be developed. Although in the present study the rejection algorithm was the most advantageous, a general MH algorithm may prove more flexible for such extended models due to its more direct approach. It is expected that extending the MCMC methods provided here to more complex models will exacerbate any issues regarding acceptance rates in different ways, so it remains to be seen which method will perform best after such an extension. 
+
+This study is also limited to the assumption that the data follows the von Mises distribution. It is expected that a large chunk of the circular data encountered in practice will follow this distribution. Groundwork for a general method for any kind of circular distribution was provided by \citet{Bhattacharya2009} and employs importance sampling. Because importance sampling relies on defining an additional density to approximate normalising constants, simpler methods such as the ones presented here are preferred where possible. 
+
+In sum, the intrinsic approach offers a promising and flexible approach to Bayesian analysis of circular data, and its extension to a model with $J$ multiple groups is an important first step towards developing flexible modeling of circular data in between-subjects designs. 
+
+\bibliographystyle{gSCS}
+\bibliography{C:/Dropbox/Masterthesis/Writing/CircularData}
+
+\end{document}
