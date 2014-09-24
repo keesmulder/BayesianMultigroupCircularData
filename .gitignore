@@ -1,6 +1,7 @@
 cache/*
 figure/*
 Submissions/*
+Spread/Article/Submissions/*
 Datasets/*
 *.csv
 *.rda
