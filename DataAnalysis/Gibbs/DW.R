@@ -6,25 +6,32 @@ require(Rcpp)
 Sys.setenv("PKG_CXXFLAGS" = paste0("-I", getwd()))
 sourceCpp("DataAnalysis/Gibbs/DWC.cpp")
 
-# FUNCTION DEFINITIONS ----------------------------------------------------------------
+# FUNCTION DEFINITIONS -------------------------------------------------------
+# CDF and Inverse CDF (Quantile function) for the exponential distribution.
 exp_cum          <- function(x, rate = 1)     1 - exp(- rate * x)
 exp_inv_cum      <- function(x, rate = 1)     -(log(1-x)/rate)
+
+# Obtains lambda_k, which is used in the Bessel function.
 getLambda        <- function (k) factorial(k)^-2 * 0.5^(2*k)
 
 
-# SAMPLER ----------------------------------------------------------------
-# th is the data supplied as a list with one group per item in the list.
-# mu_0, R_0, c are the prior properties.
-# Q is the desired number of iterations.
-# burn is the burn-in
-# lag is the thinning factor. Only 1/lag iterations will be saved.
-# mu_start, kp_start and start_w are the starting values.
-# N_k_attempts is the chosen Z.
 DW <- function(th, R_0=rep(0, length(th)), mu_0=rep(0, length(th)),
                          c=rep(0, length(th)), Q=10000, burn=0, lag = 1,
                          mu_start = 0, kp_start = 2, start_w = 4,
-                         N_k_attempts = 85) {
-  if(!is.list(th)) stop("This function requires the data to be entered as a list of groups of angles.")
+                         Z = 85) {
+  # SAMPLER ----------------------------------------------------------------
+  # th: The circular data supplied as a list with one group per item in the list.
+  # mu_0, R_0, c: Prior representing c observations in direction mu_0,
+  #               with resultant length R_0.
+  # Q: The desired number of iterations.
+  # burn: Number of iterations to discard as burn in.
+  # lag: Number representing a thinning factor.
+  #      Only 1/lag iterations will be saved.
+  # mu_start, kp_start, start_w: Starting values of mean, concentration, and w.
+  # Z: is the chosen Z.
+
+  if(!is.list(th)) stop(paste("This function requires the data to be entered",
+                              "as a list of groups of angles.")
 
   # Qb is the amount of iterations plus the burn-in.
   Qb <- Q + burn
@@ -58,18 +65,18 @@ DW <- function(th, R_0=rep(0, length(th)), mu_0=rep(0, length(th)),
   # Sampled parameters
   mu <- matrix(NA, nrow = Q, ncol = J)
   kappa <- w <- as.numeric(rep(NA, Q))
-  N_k <- numeric(N_k_attempts)
+  N_k <- numeric(Z)
 
   ## Initialization --------------------
   mu[1, ]   <- mu_start
   w[1]      <- start_w
   kappa[1]  <- kp_start
-  lambda    <- getLambda(1:N_k_attempts)
+  lambda    <- getLambda(1:Z)
 
   # Run the Gibbs sampler in C++.
   out <- DWC(mu_start, start_w, kp_start,
                             lambda, mu_n, R, R_t, m,
-                            N_k_attempts, Qb+1, lag)
+                            Z, Qb+1, lag)
 
   kappa <- out[-(1:burn), 2]
   mu    <- as.matrix(out[-(1:burn), 3:ncol(out)])%% (2*pi)

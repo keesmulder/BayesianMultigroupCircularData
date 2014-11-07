@@ -13,7 +13,7 @@ double Wapprox (double t) {
 // The rejection sampler
 // [[Rcpp::export]]
 Rcpp::List FMC(Rcpp::List th, double kp_start,
-NumericVector mu_n, NumericVector R_n, double R_t, int m_t,
+               NumericVector mu_n, NumericVector R_n, double R_t, int m_t,
 int Qb, int lag) {
 
 

@@ -16,6 +16,8 @@ double dlogchisqc (double x, double df) {
   return (halfdf - 1) * log(x) - x / 2 - halfdf * log(2) - lgamma(halfdf);
 }
 
+()
+
 //  MH sampler
 // [[Rcpp::export]]
   Rcpp::List VMMHC(double kp_start,
