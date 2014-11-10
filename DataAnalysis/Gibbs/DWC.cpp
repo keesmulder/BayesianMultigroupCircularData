@@ -100,16 +100,16 @@ NumericMatrix DWC(double start_mu, double start_w, double start_kappa,
       }
     }
 
-    U2        = runif(1, 0, 1 - exp(- R_n * (N - kappa_min)))[0] ;
 
     // The new value for kappa.
+    U2     = runif(1, 0, 1 - exp(- R_n * (N - kappa_min)))[0] ;
     tkappa = -(log(1-U2)/R_n) + kappa_min;
 
     // For non-thinned out iterations, save the current values.
     if (i % lag == 0) {
      idvlag = i/lag;
      mu(idvlag, _) = tmu;
-     w[idvlag] = tw;
+     w[idvlag]     = tw;
      kappa[idvlag] = tkappa;
     }
 
