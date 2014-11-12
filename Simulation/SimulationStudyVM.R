@@ -1,3 +1,15 @@
+# ----------------------------------------------------------
+# SimulationStudyVM.R
+# Runs simulateVM.R for several different scenario's, specifically with
+# different n, kappa, and meandifs.
+#
+# Kees Tim Mulder Last updated: November 2014
+#
+# This work was supported by a Vidi grant awarded to I. Klugkist from the Dutch
+# Organization for Scientific research (NWO 452-12-010).
+# ----------------------------------------------------------
+
+
 source("Simulation/SimulateVM.R")
 
 # Perform a simulation study on a sampler with given properties.
@@ -5,7 +17,23 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
                                meandifs=20*(pi/180), J=1,
                                Q=10000, burn=500, lag=1,
                                printcell=TRUE, printsim=FALSE, ...) {
-
+  # FUNCTION simulationStudyVM ----------------------------------------------
+  # samplername: The MCMC-sampler to be used, passed as a string.
+  # nsim: The number of datasets to read in. These must have been generated
+  #       beforehand.
+  # ns, kappas, meandifs: Properties of the datasets to be read in for analysis.
+  #                       Respectively the sample size, concentration,
+  #                       and difference between the group means.
+  # J: Number of groups to be used.
+  # Q: The desired number of iterations to run the chosen MCMC method.
+  # burn: Number of iterations to discard as burn-in.
+  # lag: Number representing a thinning factor.
+  #      Only 1/lag iterations will be saved.
+  # printcell: Whether the name of each scenario should be printed.
+  # printsim: Whether to print the number of the current iteration.
+  # ...: Further arguments to be passed to SimulateVM().
+  # Returns: A list of length 2 containing the results and the design.
+  # ------------------------------------------------------------------------
 
   # For getting computational time.
   timeStarted <- Sys.time()
@@ -26,8 +54,6 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
 
   # Full simulation results
   # [outcomes, nsim, n, kappa, meandif, ngroup (J)]
-  # for n, we want to know if it breaks down.
-  # for kappa, we want to see what the limits are
   FSR <- array(NA, dim = fd,
                dimnames = list(simnr = 1:nsim,
                                outcomes=1:noutcome,
@@ -35,6 +61,7 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
                                kappa=kappas,
                                meandif=meandifs))
 
+  # Run simulateVM for each scenario.
   for (n in ns) {
     for (kappa in kappas) {
       for (meandif in meandifs) {
@@ -63,6 +90,7 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
   timeFinished <- Sys.time()
   timeDif <- timeFinished - timeStarted
 
+  # Construct output.
   ssres$Design <- list("Sampling Method" = samplername,
                        "Number of simulations"=nsim,
                        "Sample sizes"=ns,
@@ -88,8 +116,8 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
                     paste0("mudif", paste(round(meandifs,2), collapse=",")),
                     paste0("J", J), paste0("Q", Q), paste0(textTime,"]"), sep = "]__[")
 
+  # Save the results to disk as a .rda file.
   save(ssres, file=paste0("Simulation/Results/", filename, ".rda"))
-
 
   return(ssres)
 }

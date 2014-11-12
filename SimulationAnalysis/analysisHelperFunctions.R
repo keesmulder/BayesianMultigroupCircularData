@@ -1,7 +1,18 @@
-require(abind)
+# ----------------------------------------------------------
+# analysisHelperFunctions.R
+# Some short functions to gather output from the simulation study.
+#
+# Kees Tim Mulder
+# Last updated: November 2014
+#
+# This work was supported by a Vidi grant awarded to I. Klugkist from the Dutch
+# Organization for Scientific research (NWO 452-12-010).
+# ----------------------------------------------------------
 
-# Load ssres from working directory, and extract the results part without Design. 
-loadssres <- function(filename, wd="(4) Code for simulation/Results/") {
+library(abind)
+
+# Load ssres from working directory, and extract the results part without Design.
+loadssres <- function(filename, wd="Simulation/Results/") {
   if (wd!="") setwd(wd)
   load(filename)
   ssres$Results
@@ -17,13 +28,13 @@ getres <- function(rl, nout, meanfun = colMeans){
 
 
 # Combine several outcomes from their string filenames on a given dimension (ie. kappa or n)
-combineRes <- function(rnames, onDim=3, wd="(4) Code for simulation/Results/") {
+combineRes <- function(rnames, onDim=3, wd="Simulation/Results/") {
   setwd(wd)
   ssreslist <- lapply(rnames, function(x) {load(x); ssres$Results})
   abind(ssreslist, along=onDim)
 }
 
-# Create a table in which multiple samplers are compared. 
+# Create a table in which multiple samplers are compared.
 comparisontable <- function(rl, fnames, J=1, digits=2, ns=NULL, ks=NULL, concise=TRUE) {
   if (concise) {
     angInd <- if(J==1) {c(4)} else {8:10}
@@ -32,29 +43,30 @@ comparisontable <- function(rl, fnames, J=1, digits=2, ns=NULL, ks=NULL, concise
     angInd <- if(J==1) {c(4)} else {8:10}
     linInd <- if(J==1) {c(7:8, 11:15, 20:21, 23:25)} else {c(17:20, 23:27, 32:33, 35:37)}
   }
-  
+
   if (is.null(ns)) ns <- dimnames(rl[[1]])[[3]]
   if (is.null(ks)) ks <- dimnames(rl[[1]])[[4]]
-  
-  out <- data.frame(matrix(nc=3+length(angInd)+length(linInd), nr=length(rl)*length(ns)*length(ks)))
+
+  out <- data.frame(matrix(nc=3+length(angInd)+length(linInd),
+                           nr=length(rl)*length(ns)*length(ks)))
   ri <- 1
-  
+
   for (n in ns) {
     dispn <- n
-    
+
     for (k in ks) {
       dispk <- k
-      
-      for (fname in fnames) {        
+
+      for (fname in fnames) {
         r <- rl[[fname]]
-        
+
         # Find results for the angles, as they need special treatment.
         angleResults  <- round(apply(r[, angInd, n, k, , drop=FALSE], 2, meanDir, na.rm=TRUE)*(180/pi), digits=digits)
-        
+
         linearResults <- round(colMeans(r[,linInd,n,k,], na.rm=TRUE), digits=digits)
-        
+
         out[ri, ] <- c(dispn, dispk, fname, angleResults, linearResults)
-        
+
         # Set for next iteration.
         dispn <- dispk <- ""
         ri <- ri+1
@@ -90,7 +102,7 @@ addZeros <- function(chvec, digits=2) {
 # Get datasets for testing errors.
 thget <- function(i, J=3, kappa=.1, n=5, wd=paste0(getwd(), "/(2) Data/Datasets")) {
   if (wd!="") setwd(wd)
-  readfilename <- paste0("/Datasets_", 
+  readfilename <- paste0("/Datasets_",
                          "J=", J, "_n=", n, "_kap=", kappa, "/nr", i, ".csv")
   th <- read.table(readfilename, sep=",")
   th

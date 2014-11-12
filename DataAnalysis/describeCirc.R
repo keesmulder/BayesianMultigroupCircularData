@@ -1,3 +1,17 @@
+# ----------------------------------------------------------
+# DescribeCirc.R
+# Several functions to compute summary statistics and plots for circular data.
+#
+# Kees Tim Mulder
+# Last updated: November 2014
+#
+# This work was supported by a Vidi grant awarded to I. Klugkist from the
+# Dutch Organization for Scientific research (NWO 452-12-010).
+# ----------------------------------------------------------
+
+
+
+
 
 # FUNCTION trigMoment  ----------------------------------------------------
 # Calculates the (uncentered or centered) p-th sample trigonometric moment.
@@ -45,6 +59,25 @@ meanDir <- function (th, na.rm=TRUE) {
   C <- sum(cos(th), na.rm=na.rm)
   S <- sum(sin(th), na.rm=na.rm)
   atan2(S, C)%%(2*pi)
+}
+
+
+# FUNCTION getR  ---------------------------------------------------
+# Calculates the resultant length.
+#   th:       A numeric vector containing the angles in the sample, in radians.
+#   na.rm:    Whether NA's will be removed.
+# Returns:    A scalar, the resultant length in radians.
+getR <- function (th, na.rm=TRUE) {
+  Mod(sum(cos(th) + 1i * sin(th), na.rm=na.rm))
+}
+
+# FUNCTION getRbar  ---------------------------------------------------
+# Calculates the mean resultant length.
+#   th:       A numeric vector containing the angles in the sample, in radians.
+#   na.rm:    Whether NA's will be removed.
+# Returns:    A scalar, the mean resultant length in radians.
+getRbar <- function (th, na.rm=TRUE) {
+  getR(th, na.rm=na.rm)/length(th)
 }
 
 
@@ -150,9 +183,8 @@ summaryCirc <- function (th, type = "radians", plot = FALSE) {
 
 
 
-###
-### FUNCTION plotCircular
-###
+
+### FUNCTION plotCircular -------------------------------------------------
 #
 #   th:           A numeric vector containing the angles in the sample.
 #                 By default, this is calculated in radians.
@@ -218,10 +250,9 @@ addAngle <- function(th, col="tomato") {
 
 
 
-###
-### FUNCTION plotCircularDensity
-### Plots a circular density on a circle.
-###
+
+### FUNCTION plotCircularDensity ------------------------------------------
+# Plots a circular density on a circle.
 plotCircularDensity <- function(FUN, r=.6, res=360, add=FALSE, col="black", ...) {
 
   if (!require(plotrix)) stop("\n Package 'plotrix' must be installed! \n")
@@ -251,9 +282,8 @@ plotCircularDensity <- function(FUN, r=.6, res=360, add=FALSE, col="black", ...)
 
 
 
-###
-### FUNCTION circularQuantile
-###
+
+### FUNCTION circularQuantile ---------------------------------------------------
 # A wrapper for quantile() that first reverse-centres the circular data in order
 # to prevent the results being influenced by an arbitrary starting point.
 #   th:         A numeric vector containing the angles in the sample.

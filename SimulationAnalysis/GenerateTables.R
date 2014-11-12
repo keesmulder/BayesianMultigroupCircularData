@@ -1,3 +1,15 @@
+# ----------------------------------------------------------
+# GenerateTables.R
+# Create tables to be input into LaTeX format.
+#
+# Kees Tim Mulder
+# Last updated: November 2014
+#
+# This work was supported by a Vidi grant awarded to I. Klugkist from the Dutch
+# Organization for Scientific research (NWO 452-12-010).
+# ----------------------------------------------------------
+
+
 require(xtable)
 source('(5) Code for analysis/analysisHelperFunctions.R')
 source("(6) Basic codes/DescribeCirc.R")
@@ -9,23 +21,23 @@ setwd("(4) Code for simulation/Results/")
 DWj1k.1 <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 10.13.18].rda",
                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 12.40.49].rda",
                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 16.33.55].rda"), onDim=3)
-DWj1k4  <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 12.20.54].rda", 
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 15.27.03].rda", 
+DWj1k4  <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 12.20.54].rda",
+                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 15.27.03].rda",
                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-17 15.46.11].rda"), onDim=3)
-DWj3k.1 <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 10.22.35].rda", 
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 16.20.13].rda", 
+DWj3k.1 <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 10.22.35].rda",
+                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 16.20.13].rda",
                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 23.02.41].rda"), onDim=3)
-DWj3k4  <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 15.59.14].rda", 
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 21.58.57].rda", 
+DWj3k4  <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 15.59.14].rda",
+                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 21.58.57].rda",
                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-18 02.54.39].rda"), onDim=3)
 
 # Make an empty result set to put in instead of k=32
 DWNAj1       <- DWj1k4
 DWNAj1[,,,,] <- NA
-dimnames(DWNAj1)[[4]] <- "32" 
+dimnames(DWNAj1)[[4]] <- "32"
 DWNAj3       <- DWj3k4
 DWNAj3[,,,,] <- NA
-dimnames(DWNAj3)[[4]] <- "32" 
+dimnames(DWNAj3)[[4]] <- "32"
 
 # Combine these.
 DWj1 <- abind(DWj1k.1, DWj1k4, DWNAj1, along=4)
@@ -49,7 +61,7 @@ nmeth <- length(rlj1)
 
 
 # CREATE TABLES
-# Create comparison tables. 
+# Create comparison tables.
 j1res <- comparisontable(rl=rlj1, fnames=c("DW", "MH", "FM"), ks=c("0.1", "4", "32"))
 j1resclean <- cleanRes(j1res)
 
@@ -81,24 +93,24 @@ j3file <- "(5) Code for analysis/j3table.tex"
 # Place the table
 capture.output({
 
-  print(xtable(j1resclean, digits=2, align = rep("c", 10)), floating = FALSE, 
+  print(xtable(j1resclean, digits=2, align = rep("c", 10)), floating = FALSE,
         size="footnotesize", #Change size; useful for bigger tables
         include.rownames=FALSE, #Don't print rownames
         include.colnames=FALSE, #We create them ourselves
-        caption.placement="top", 
+        caption.placement="top",
         hline.after=NULL, #We don't need hline; we use booktabs
-        add.to.row = list(pos = as.list(c(-1, -1, 
+        add.to.row = list(pos = as.list(c(-1, -1,
                                           spaceLocs,
-                                          nrow(j1resclean), 
+                                          nrow(j1resclean),
                                           nsplits)),
                           command = c(paste("\\toprule \n &&& \\multicolumn{2}{c}{Posterior $\\mu$}",
                                             "& \\multicolumn{2}{c}{Posterior $\\kappa$", kapfoot, "}& ",
                                             "\\\\\n  "), #\\cline{6-9}
                                       paste("n & $\\kappa$ & Method & Mean & Coverage & Mode & Coverage
-                                            & Acc.", accfoot, "& MCT", mctfoot,"\\\\\n", 
+                                            & Acc.", accfoot, "& MCT", mctfoot,"\\\\\n",
                                             "\\midrule \n"),
                                       rep("\\vspace{0.2cm}", (nrow(j1resclean)/nmeth)-3),
-                                      "\\bottomrule \n", 
+                                      "\\bottomrule \n",
                                       rep("\\cmidrule{1-9}", length(nsplits)))
         )
   )
@@ -110,29 +122,29 @@ capture.output({
 
 
 capture.output({
-  
+
   print(xtable(j3resclean, digits=2, align = rep("c", 12)), floating=FALSE,
         size="footnotesize", #Change size; useful for bigger tables
-        include.rownames=FALSE, 
+        include.rownames=FALSE,
         include.colnames=FALSE, #We create them ourselves
-        caption.placement="top", 
+        caption.placement="top",
         hline.after=NULL, #We don't need hline; we use booktabs
-        add.to.row = list(pos = as.list(c(-1, -1, 
+        add.to.row = list(pos = as.list(c(-1, -1,
                                           spaceLocs,
                                           nrow(j3resclean),
                                           nsplits)),
                           command = c(paste("\\toprule \n &&& \\multicolumn{4}{c}{Posterior $\\mu$}",
                                             "& \\multicolumn{2}{c}{Posterior $\\kappa$", kapfoot, "}& ",
-                                            "\\\\\n  "), #"\\cline{4-7}"), 
+                                            "\\\\\n  "), #"\\cline{4-7}"),
                                       paste("$n_j$ & $\\kappa$ & Method & $\\mu_1$ & $\\mu_2$ & $\\mu_3$ & Coverage & Mode & Coverage",
-                                            "& Acc.", accfoot, "& MCT", mctfoot,"\\\\\n", 
+                                            "& Acc.", accfoot, "& MCT", mctfoot,"\\\\\n",
                                             "\\midrule \n"),
                                       rep("\\vspace{0.2cm}", (nrow(j3resclean)/nmeth)-3),
                                       "\\bottomrule \n",
                                       rep("\\cmidrule{1-11} \n ", length(nsplits)))
         )
   )
-  
+
 }, file=j3file)
 
 

@@ -1,14 +1,28 @@
+# ----------------------------------------------------------
+# GenerateData.R
+# Function to create a given number of datasets, on which then simulations can
+# be run.
+#
+# Kees Tim Mulder
+# Last updated: November 2014
+#
+# This work was supported by a Vidi grant awarded to I. Klugkist from the
+# Dutch Organization for Scientific research (NWO 452-12-010).
+# ----------------------------------------------------------
+
+
 library(Rcpp)
 sourceCpp("Data/rvmc.cpp")
 
-# Function to generate datasets
-# ndat:    Number of datasets to be generated.
-# ns:      Vector of possible sample sizes.
-# kaps:    Vector of possible kappas.
-# Js:      Vector of possible numbers of groups.
-# meandif: Difference between each group.
 
 generateVonMisesData <- function(ndat, ns, kaps, Js=1, meandif=(20*(pi/180))) {
+  # FUNCTION generateVonMisesData ---------------------
+  #Args:
+  # ndat:    Number of datasets to be generated.
+  # ns:      Vector of possible sample sizes.
+  # kaps:    Vector of possible kappas.
+  # Js:      Vector of possible numbers of groups.
+  # meandif: Difference between each group.
 
 
   for (J in Js) {
@@ -40,7 +54,4 @@ generateVonMisesData <- function(ndat, ns, kaps, Js=1, meandif=(20*(pi/180))) {
   }
 }
 
-# Generate the data.
-set.seed(8921747)
-generateVonMisesData(10, c(5, 30, 100), c(0.1, 4, 32), J=c(1,3))
 

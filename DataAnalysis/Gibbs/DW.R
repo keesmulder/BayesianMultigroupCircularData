@@ -3,20 +3,17 @@
 # This is an implementation of the circular data Gibbs sampler in Damien &
 # Walker, 1999. A more thorough explanation of the article and this code can be
 # found in the file Explanation of Damien & Walker.
-# 
+#
 # Kees Tim Mulder
 # Last updated: November 2014
-# 
+#
 # This work was supported by a Vidi grant awarded to I. Klugkist from the
 # Dutch Organization for Scientific research (NWO 452-12-010).
 # ----------------------------------------------------------
 
 require(Rcpp)
 
-# Here, we assume that boost can be found in the current working directory.
-Sys.setenv("PKG_CXXFLAGS" = paste0("-I", getwd()))
-
-# Source the actual algorithm, written in Rcpp. 
+# Source the actual algorithm, written in Rcpp.
 sourceCpp("DataAnalysis/Gibbs/DWC.cpp")
 
 # FUNCTION DEFINITIONS -------------------------------------------------------
@@ -31,8 +28,9 @@ getLambda        <- function (k) factorial(k)^-2 * 0.5^(2*k)
 DW <- function(th, R_0=rep(0, length(th)), mu_0=rep(0, length(th)),
                c=rep(0, length(th)), Q=10000, burn=0, lag = 1,
                mu_start = 0, kp_start = 2, start_w = 4, Z = 85) {
-  # SAMPLER ----------------------------------------------------------------
-  # th: The circular data supplied as a list with one group per item in the list.
+  # FUNCTION DW ------------------------------------------------------------
+  # th: The circular data supplied as radians, in a list with one
+  #     group per item in the list.
   # mu_0, R_0, c: Prior representing c observations in direction mu_0,
   #               with resultant length R_0.
   # Q: The desired number of iterations.
@@ -40,12 +38,14 @@ DW <- function(th, R_0=rep(0, length(th)), mu_0=rep(0, length(th)),
   # lag: Number representing a thinning factor.
   #      Only 1/lag iterations will be saved.
   # mu_start, kp_start, start_w: Starting values of mean, concentration, and w.
-  # Z: is the chosen Z, the number of attempts to find the minimum value for N_k.
+  # Z: The chosen Z, the number of attempts to find the minimum value for N_k.
+  # Returns: A list, with a matrix of mean directions, a vector of
+  #          concentrations, and a list, 'spec' of additional values.
   # ------------------------------------------------------------------------
-  
-  
+
+
   if(!is.list(th)) stop(paste("This function requires the data to be entered",
-                              "as a list of groups of angles.")
+                              "as a list of groups of angles."))
 
   # Qb is the amount of iterations plus the burn-in.
   Qb <- Q + burn

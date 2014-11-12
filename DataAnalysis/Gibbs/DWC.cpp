@@ -13,17 +13,22 @@ Dutch Organization for Scientific research (NWO 452-12-010).
 
 #include <Rcpp.h>
 #include <iostream>
-#include <boost/math/special_functions/bessel.hpp>
 using namespace Rcpp;
+
+// [[Rcpp::depends(BH)]]
+#include <boost/math/special_functions/bessel.hpp>
+
 
 // [[Rcpp::export]]
 NumericMatrix DWC(double start_mu, double start_w, double start_kappa,
                   NumericVector lambda,
                   NumericVector mu_n, NumericVector R, double R_n,
                   int m, int Z, int Q, int lag) {
-  //  FUNCTION DWC
-  //  Generates samples from the posterior k von Mises distributions, each with
-  //  a separate mean, but with one common concentration kappa.
+  /* FUNCTION DWC -------------------------------------------
+  Generates samples from the posterior of k von Mises distributions, each with
+  a separate mean, but with one common concentration kappa.
+  ------------------------------------------------------------ */
+
 
   // Save the number of groups.
   int k = mu_n.size();
@@ -59,6 +64,7 @@ NumericMatrix DWC(double start_mu, double start_w, double start_kappa,
     logtau = log (runif(1)[0]);
     Rsum = sum(R * (1 + cos(tmu - mu_n)));
 
+
     //// Sample a value for the mean for each group. ////
     g = (logtau/(R_n * tkappa)) + (Rsum/R_n) - 1;
     if (g < -1) {
@@ -72,12 +78,14 @@ NumericMatrix DWC(double start_mu, double start_w, double start_kappa,
       tmu[j] = runif (1, mu_min, mu_max)[0];
     }
 
+
     //// Sample a new value for w. ////
     M = tw + rexp (1, boost::math::cyl_bessel_i(0, tkappa) - 1 )[0];
     w_min = pow (runif(1,0,1)[0], odmmo) * tw;
 
     U1 = runif (1, 0, 1 - exp(w_min - M))[0];
     tw = -log(1-U1) + w_min;
+
 
     //// Sample a new value for kappa. ////
     v_n = (logtau/Rsum) + tkappa;
@@ -100,10 +108,10 @@ NumericMatrix DWC(double start_mu, double start_w, double start_kappa,
       }
     }
 
-
     // The new value for kappa.
     U2     = runif(1, 0, 1 - exp(- R_n * (N - kappa_min)))[0] ;
     tkappa = -(log(1-U2)/R_n) + kappa_min;
+
 
     // For non-thinned out iterations, save the current values.
     if (i % lag == 0) {

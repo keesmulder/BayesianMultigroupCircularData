@@ -1,18 +1,17 @@
-library(Rcpp)
+# ----------------------------------------------------------
+# SimulateVM.R
+# Given some properties of data, read in all nsim datasets and analyze
+# these with a given sampling function.
+#
+# Kees Tim Mulder
+# Last updated: November 2014
+#
+# This work was supported by a Vidi grant awarded to I. Klugkist from the
+# Dutch Organization for Scientific research (NWO 452-12-010).
+# ----------------------------------------------------------
 
-##############
-# Two CXXFLAGS are set. These flags will allow the Rcpp samplers to load two
-# functions: The C++ Bessel function from the package Boost, and the rvmc.cpp
-# function to draw from the von Mises distribution, which is used for the mean
-# direction.
-#
-# Boost must be installed, and this must point to it's directory. May not be
-# necessary outside of Windows.
-Sys.setenv("PKG_CXXFLAGS"="-Ic:/Boost/include/boost-1_55")
-#
-# Sets the working directory for Rcpp.
-Sys.setenv("PKG_CXXFLAGS" = paste0("-I", getwd()))
-#############
+library(Rcpp)
+library(BH)
 
 source("DataAnalysis/Gibbs/DW.R")
 source("DataAnalysis/MH/VMMH.R")
@@ -27,6 +26,24 @@ Rcpp::sourceCpp("Data/rvmc.cpp")
 simulateVM <- function (nsim, n, kappa, J, meandif, Q,
                         burn, lag=1, FUN, prob = .95, printsim=FALSE,
                         wd = getwd(), ...) {
+  # FUNCTION simulateVM ----------------------------------------------------
+  # nsim: The number of datasets to read in. These must have been generated
+  #       beforehand.
+  # n, kappa, J, meandif: Properties of the datasets to be read in for analysis.
+  #                       Respectively the sample size, concentration, number
+  #                       of groups and difference between the group means.
+  # Q: The desired number of iterations to run the chosen MCMC method.
+  # burn: Number of iterations to discard as burn-in.
+  # lag: Number representing a thinning factor.
+  #      Only 1/lag iterations will be saved.
+  # prob: We compute a prob*100% credible interval within. For example, with
+  #       prob=.95, the symmetric interval used is (.025, .975).
+  # printsim: Whether to print the number of the current iteration.
+  # wd: Current working directory.
+  # Returns: A list, with a matrix of mean directions, a vector of
+  #          concentrations, and a list, 'spec' of additional values.
+  # ------------------------------------------------------------------------
+
 
   # The probabilities used later for CCI's.
   probs <- c((1-prob)/2, 1-(1-prob)/2)
@@ -62,6 +79,8 @@ simulateVM <- function (nsim, n, kappa, J, meandif, Q,
   for (i in 1:nsim){
     if (printsim) cat(i, "-", sep="")
 
+    res <- list(mu =  matrix(NA, nrow=Q, ncol=J), kappa = rep(NA, Q), spec=list())
+
     # Read in data data.
     readfilename <- paste0(wd, "/Data/Datasets/Datasets_",
                            "J=", J, "_n=", n, "_kap=", kappa, "/nr", i, ".csv")
@@ -70,6 +89,7 @@ simulateVM <- function (nsim, n, kappa, J, meandif, Q,
     # Data properties.
     sample_mean_directions[i, ] <- sapply(th, meanDir)
     sample_approx_kaps[i, ]     <- sapply(th, approxKappaML)
+
     # Combine centered data and estimate kappa.
     centth <- sapply(1:J, function(j) th[[j]]-sample_mean_directions[i, j])
     centred_approxKappaML[i] <- approxKappaML(as.numeric(centth))
@@ -77,21 +97,10 @@ simulateVM <- function (nsim, n, kappa, J, meandif, Q,
 
     # Run the MCMC function. By default, we take uninformative priors.
     # try() will catch the errors, system.time() will save duration.
-     try({
-    ct[i] <- system.time(
-      res <- FUN(th=th, R_0=n0, mu_0=n0, c=n0, Q=Q,
-                 burn=burn, lag=lag, ...) )[3]
-     },silent=TRUE)
-
-    R_n_post[i] <- res$spec$R_t
-
-    if(!is.null(res$spec$acceptance)) {
-      acceptance[i] <- res$spec$acceptance
-    } else {
-      acceptance[i] <- 1
-    }
-
-    # Posterior properties
+    try({
+      ct[i] <- system.time(res <- FUN(th=th, R_0=n0, mu_0=n0, c=n0, Q=Q,
+                                      burn=burn, lag=lag, ...) )[3]
+    },silent=TRUE)
 
 
     # If the run has crashed, we'll go on to the next attempt. It may have
@@ -104,6 +113,14 @@ simulateVM <- function (nsim, n, kappa, J, meandif, Q,
     crashed[i] <- is.na(ct[i]) || any(is.na(res$mu))
 
     if(!crashed[i]) {
+
+      if(!is.null(res$spec$acceptance)) {
+        acceptance[i] <- res$spec$acceptance
+      } else {
+        acceptance[i] <- 1
+      }
+
+      R_n_post[i] <- res$spec$R_t
 
       ### MU
       # Mean direction of the posterior mu's.

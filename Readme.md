@@ -1,6 +1,24 @@
 # Bayesian Multigroup Circular Data
-
 ## Kees Mulder, 2014
+
+This project contains all code for the paper "Extending Bayesian analysis of circular data to multiple groups", Mulder, K.T., & Klugkist, I. (2014). It may be used to replicate all tables and data contained within.  
+
+
+R Package dependencies:
+
+- Rcpp
+- BH
+- xtable
+- ggplot2
+- abind
+
+Additionally, the C++ library boost must be installed on the system.
+
+## Usage
+
+The simulation is performed from Simulation/runSimulationStudy.R, which calls all more elementary functions. For application purposes, the MCMC samplers are found in DataAnalysis/(Gibbs, MH, Rejection), and can be used by sourcing DW.R, VMMH.R and FM.R, respectively. 
+
+# Files
 
 ## Data
 

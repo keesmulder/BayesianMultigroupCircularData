@@ -1,12 +1,35 @@
-# This is an implementation of the MH-algorithm for the von Mises distribution.
+# ----------------------------------------------------------
+# VMMH.R
+# This is an implementation of the MH-algorithm for multiple groups of data from
+# the von Mises distribution.
+#
+# Kees Tim Mulder
+# Last updated: November 2014
+#
+# This work was supported by a Vidi grant awarded to I. Klugkist from the
+# Dutch Organization for Scientific research (NWO 452-12-010).
+# ----------------------------------------------------------
 
-Sys.setenv("PKG_CXXFLAGS" = paste0("-I", getwd()))
 Rcpp::sourceCpp('DataAnalysis/MH/VMMHC.cpp')
 
 # SAMPLER ----------------------------------------------------------------
 VMMH <- function(th, R_0=rep(0, length(th)), mu_0=rep(0, length(th)),
-                       c=rep(0, length(th)), Q=10000, burn=1000, lag = 1,
-                       mu_start = 0, kp_start = 2) {
+                 c=rep(0, length(th)), Q=10000, burn=1000, lag = 1,
+                 mu_start = 0, kp_start = 2) {
+  # FUNCTION VMMH ----------------------------------------------------------
+  # th: The circular data supplied as radians, in a list with one
+  #     group per item in the list.
+  # mu_0, R_0, c: Prior representing c observations in direction mu_0,
+  #               with resultant length R_0.
+  # Q: The desired number of iterations.
+  # burn: Number of iterations to discard as burn in.
+  # lag: Number representing a thinning factor.
+  #      Only 1/lag iterations will be saved.
+  # mu_start, kp_start: Starting values of mean and concentration.
+  # Returns: A list, with a matrix of mean directions, a vector of
+  #          concentrations, and a list, 'spec' of additional values.
+  # ------------------------------------------------------------------------
+
 
   # Qb is the amount of iterations plus the burn-in.
   Qb <- Q + burn
@@ -22,6 +45,7 @@ VMMH <- function(th, R_0=rep(0, length(th)), mu_0=rep(0, length(th)),
   n <- R_n <- mu_n <- R_0 <- mu_0 <- numeric(J)
 
   for (j in 1:J) {
+
     # Group sample size and sum of (co-)sines in the data
     n[j] <-  length(th[[j]])
     C    <- sum(cos(th[[j]]))

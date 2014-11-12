@@ -1,3 +1,14 @@
+# ----------------------------------------------------------
+# ExampleRunsDWMHFM.R
+# Run example chains for the three methods, and show them in a plot.
+#
+# Kees Tim Mulder
+# Last updated: November 2014
+#
+# This work was supported by a Vidi grant awarded to I. Klugkist from the Dutch
+# Organization for Scientific research (NWO 452-12-010).
+# ----------------------------------------------------------
+
 require(xtable)
 require(ggplot2)
 
@@ -8,7 +19,7 @@ source("DataAnalysis/describeCirc.R")
 source('SimulationAnalysis/analysisHelperFunctions.R')
 
 
-# Read in data data.
+# Read in data.
 n     <- 30
 kappa <- .1
 J     <- 3
