@@ -62,8 +62,6 @@ NumericMatrix DWC(double start_mu, double start_w, double start_kappa,
     // Variables whose values are used multiple times.
     logtau = log (runif(1)[0]);
 
-
-
     //// Sample a value for the mean for each group. ////
     for (int j = 0; j < k; j++) {
       Rjdis = R[j] * (1 + cos(tmu[j] - mu_n[j]));
@@ -72,8 +70,6 @@ NumericMatrix DWC(double start_mu, double start_w, double start_kappa,
         g = -1;
       }
       acosg = acos (g);
-
-//      std::cout << j << "   :   " << g << std::endl;
 
       mu_min = mu_n[j] - acosg;
       mu_max = mu_n[j] + acosg;
