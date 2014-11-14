@@ -12,7 +12,7 @@
 library(abind)
 
 # Load ssres from working directory, and extract the results part without Design.
-loadssres <- function(filename, wd="Simulation/Results/") {
+loadssres <- function(filename, wd=getwd()) {
   if (wd!="") setwd(wd)
   load(filename)
   ssres$Results
@@ -28,8 +28,8 @@ getres <- function(rl, nout, meanfun = colMeans){
 
 
 # Combine several outcomes from their string filenames on a given dimension (ie. kappa or n)
-combineRes <- function(rnames, onDim=3, wd="Simulation/Results/") {
-  setwd(wd)
+combineRes <- function(rnames, onDim=3, wd=getwd()) {
+  if (wd!="") setwd(wd)
   ssreslist <- lapply(rnames, function(x) {load(x); ssres$Results})
   abind(ssreslist, along=onDim)
 }

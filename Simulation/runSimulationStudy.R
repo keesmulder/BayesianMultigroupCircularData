@@ -13,7 +13,7 @@
 
 
 source('Simulation/SimulationStudyVM.R')
-source('C:/Dropbox/Research/BayesianMultigroupCircularData/Data/GenerateData.R')
+source('Data/GenerateData.R')
 
 nsim <- 5
 

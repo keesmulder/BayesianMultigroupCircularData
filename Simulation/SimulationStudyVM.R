@@ -16,7 +16,7 @@ source("Simulation/SimulateVM.R")
 simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1, 4, 32),
                                meandifs=20*(pi/180), J=1,
                                Q=10000, burn=500, lag=1,
-                               printcell=TRUE, printsim=FALSE, ...) {
+                               printcell=TRUE, printsim=FALSE, returnnull=TRUE, ...) {
   # FUNCTION simulationStudyVM ----------------------------------------------
   # samplername: The MCMC-sampler to be used, passed as a string.
   # nsim: The number of datasets to read in. These must have been generated
@@ -30,9 +30,12 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
   # lag: Number representing a thinning factor.
   #      Only 1/lag iterations will be saved.
   # printcell: Whether the name of each scenario should be printed.
-  # printsim: Whether to print the number of the current iteration.
+  # printsim: Whether to print the number of the dataset currently in analysis.
+  # returnnull: Whether to return NULL instead of the results. If TRUE, we only
+  #             have the saved results.
   # ...: Further arguments to be passed to SimulateVM().
-  # Returns: A list of length 2 containing the results and the design.
+  #
+  # Returns: A list of length 2 containing the results and the design, or NULL.
   # ------------------------------------------------------------------------
 
   # For getting computational time.
@@ -119,7 +122,11 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
   # Save the results to disk as a .rda file.
   save(ssres, file=paste0("Simulation/Results/", filename, ".rda"))
 
-  return(ssres)
+  if(returnnull) {
+    return(NULL)
+  } else {
+    return(ssres)
+  }
 }
 
 

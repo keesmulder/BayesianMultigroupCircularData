@@ -9,13 +9,12 @@
 # Organization for Scientific research (NWO 452-12-010).
 # ----------------------------------------------------------
 
-
 require(xtable)
-source('(5) Code for analysis/analysisHelperFunctions.R')
-source("(6) Basic codes/DescribeCirc.R")
+source('SimulationAnalysis/analysisHelperFunctions.R')
+source("DataAnalysis/DescribeCirc.R")
 
 # LOAD IN DATA
-setwd("(4) Code for simulation/Results/")
+setwd("Simulation/Results/")
 
 # Combine DW data
 DWj1k.1 <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 10.13.18].rda",

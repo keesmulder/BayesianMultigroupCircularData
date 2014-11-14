@@ -12,7 +12,7 @@ R Package dependencies:
 - ggplot2
 - abind
 
-Additionally, the C++ library boost must be installed on the system.
+Additionally, the C++ library 'boost' must be installed on the system, as well as Rtools.
 
 ## Usage
 
