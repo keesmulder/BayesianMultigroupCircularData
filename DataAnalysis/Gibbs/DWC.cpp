@@ -29,7 +29,6 @@ NumericMatrix DWC(double start_mu, double start_w, double start_kappa,
   a separate mean, but with one common concentration kappa.
   ------------------------------------------------------------ */
 
-
   // Save the number of groups.
   int k = mu_n.size();
 
@@ -44,7 +43,7 @@ NumericMatrix DWC(double start_mu, double start_w, double start_kappa,
   tmu = start_mu;
 
   // Other variable initializations.
-  double logtau, Rsum, g, mu_min, mu_max, M, U1, v_n,
+  double logtau, Rsum, g, mu_min, mu_max, M, U1, v_n, Rjdis,
          kappa_min, F_k, N_k, N, acosg, odmmo, tkappa;
   long double tw, w_min, U2;
   tw     = start_w;
@@ -62,22 +61,26 @@ NumericMatrix DWC(double start_mu, double start_w, double start_kappa,
 
     // Variables whose values are used multiple times.
     logtau = log (runif(1)[0]);
-    Rsum = sum(R * (1 + cos(tmu - mu_n)));
+
 
 
     //// Sample a value for the mean for each group. ////
-    g = (logtau/(R_n * tkappa)) + (Rsum/R_n) - 1;
-    if (g < -1) {
-      g = -1;
-    }
-    acosg = acos (g);
-
     for (int j = 0; j < k; j++) {
+      Rjdis = R[j] * (1 + cos(tmu[j] - mu_n[j]));
+      g     = (logtau/(R[j] * tkappa)) + (Rjdis/R[j]) - 1;
+      if (g < -1) {
+        g = -1;
+      }
+      acosg = acos (g);
+
+//      std::cout << j << "   :   " << g << std::endl;
+
       mu_min = mu_n[j] - acosg;
       mu_max = mu_n[j] + acosg;
       tmu[j] = runif (1, mu_min, mu_max)[0];
     }
 
+    Rsum = sum(R * (1 + cos(tmu - mu_n)));
 
     //// Sample a new value for w. ////
     M = tw + rexp (1, boost::math::cyl_bessel_i(0, tkappa) - 1 )[0];
