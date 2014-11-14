@@ -12,7 +12,6 @@
 
 
 
-
 # FUNCTION trigMoment  ----------------------------------------------------
 # Calculates the (uncentered or centered) p-th sample trigonometric moment.
 #   th:       A numeric vector containing the angles in the sample.
@@ -253,7 +252,7 @@ addAngle <- function(th, col="tomato") {
 
 ### FUNCTION plotCircularDensity ------------------------------------------
 # Plots a circular density on a circle.
-plotCircularDensity <- function(FUN, r=.6, res=360, add=FALSE, col="black", ...) {
+plotCircularDensity <- function(FUN, r=.6, res=360, auc=1, add=FALSE, col="black", ...) {
 
   if (!require(plotrix)) stop("\n Package 'plotrix' must be installed! \n")
 
@@ -269,16 +268,13 @@ plotCircularDensity <- function(FUN, r=.6, res=360, add=FALSE, col="black", ...)
   segments(0,0, r, 0, col = "gray")
 
   pts <- seq(from=0, to=360, by=360/res)*(pi/180)
-  d <- 1+sapply(pts, FUN)
+  d <- 1+sapply(pts, FUN)*auc
 
   cdp <- r*d*cos(pts)
   sdp <- r*d*sin(pts)
 
   lines(cdp, sdp, col=col)
 }
-
-
-
 
 
 
