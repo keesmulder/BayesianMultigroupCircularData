@@ -1,0 +1,90 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{apacite}
+\usepackage{natbib}
+\author{Kees Mulder}
+\title{Explanation of rejection sampler for multiple groups based on Forbes \& Mardia (2014)}
+
+\setlength{\jot}{14pt}
+
+\begin{document}
+
+\maketitle
+
+\section*{Introduction}
+
+In \citet{forbes2014fast}, a fast algorithm is applied to sample the concentration parameter $\kappa$ from the posterior of a von Mises distribution. \citet{forbes2014fast} employ a parameter, $\beta_0$, given by
+$$ \beta_0 = - \frac{1}{n} \sum_{i=1}^{n} \cos(\theta_i - \mu).$$
+Here, their methods will adapted, first to using summary statistics instead of using the data $\boldsymbol{\theta}= \{ \theta_1, \cdots, \theta_n\}$ directly, and secondly to allowing for comparison of multiple groups. 
+
+The first adaptation will allow us to employ the conjugate prior by \citet{guttorp1988finding}, which uses the summary statistics. The second will allow us to apply the algorithm in more typical research scenarios.
+
+\section*{Summary statistics}
+
+Some common circular summary statistics of dataset $\boldsymbol{\theta}= \{ \theta_1, \cdots, \theta_n\}$, given by \citet{fisher1995statistical}, are
+
+$$ C = \sum_{i=1}^{n}\cos(\theta_i), ~~ S = \sum_{i=1}^{n}\sin(\theta_i) $$
+
+$$ R = \sqrt{C^2 + S^2}, ~~ \bar{R} = R/n $$
+
+$$ \bar{\theta} = \left\{ 
+  \begin{array}{l l}
+   \tan^{-1} (S/C) & \quad \textnormal{if}~ \text{$C > 0, S > 0$}\\
+   \tan^{-1} (S/C) + \pi & \quad \textnormal{if}~ \text{$C < 0$}\\ 
+   \tan^{-1} (S/C) + 2\pi & \quad \textnormal{if}~ \text{$C > 0, S < 0$}
+  \end{array} \right.$$
+
+$$ \cos(\bar{\theta}) = C/R, ~~ \sin(\bar{\theta}) = S/R $$
+
+Note that when modeling using a von Mises distribution, either $\{C, S\}$ or $\bar{\theta}$ are sufficient statistics for $\mu$, while $\bar{R}$ is sufficient for $\kappa$. 
+
+\section*{Using summary statistics}
+
+In \citet{forbes2014fast}, $\beta_0$ is a discrepancy measure that captures all information for the current sample of $\kappa$ to be drawn. In terms of $\bar{R}$ and $\bar{\theta}$, it is given by
+
+\begin{align*}
+\beta_0 & = - \frac{1}{n} \sum_{i=1}^{n} \cos(\theta_i - \mu) \\
+& = - \frac{1}{n} \left( \sum_{i=1}^{n} \cos\theta_i\cos\mu + \sin\theta_i\sin\mu \right) \\
+& = - \frac{1}{n} \left( C \cos\mu + S \sin\mu \right) \\
+& = - \frac{R}{n} \left( \frac{C}{R} \cos\mu + \frac{S}{R} \sin\mu \right) \\
+& = - \bar{R} \left( \cos\bar{\theta} \cos\mu + \sin\bar{\theta} \sin\mu \right) \\
+& = - \bar{R} \cos \left( \mu - \bar\theta \right).
+\end{align*}
+
+\section*{Incorporating prior information}
+
+The previous result can be used to create a "posterior" version of $\beta_0$, say $\beta_n$, by combining this information with the conjugate prior given by \citet{guttorp1988finding}. They denote the prior mean by $\mu_0$, the prior resultant length by $R_0$, and a 'prior sample size' by $c$. A method for combination of the data  is suggested by \citet{damien1999fullbayes}, and results in computing 
+
+$$C_n = R_0 \cos\mu_0 + R\cos\bar{\theta}, ~~ S_n = R_0 \sin\mu_0 + R\sin\bar{\theta}$$
+
+$$m = n + c$$
+
+$$ R_n = \sqrt{C_n^2 + S_n^2}, ~~ \bar{R_n} = R_n/m $$
+
+$$ \mu_n = \left\{ 
+  \begin{array}{l l}
+   \tan^{-1} (S_n/C_n) & \quad \textnormal{if}~ \text{$C_n > 0, S_n > 0$}\\
+   \tan^{-1} (S_n/C_n) + \pi & \quad \textnormal{if}~ \text{$C_n < 0$}\\ 
+   \tan^{-1} (S_n/C_n) + 2\pi & \quad \textnormal{if}~ \text{$C_n > 0, S_n < 0$}
+  \end{array} \right.$$
+
+These can simply be plugged into the result of the previous section to obtain
+$$\beta_n = - \bar{R_n} \cos \left( \mu - \mu_n \right).$$ Then, the algorithm as provided by \citet{forbes2014fast} can be applied, where $\beta_n$ is used in place of $\beta_0$, and $\eta = m$. 
+
+\section*{Incorporating prior information and multiple groups}
+
+Note that $\beta_0$ is a discrepancy measure, which finds the distance between some current mean $\mu$ and the information about the location and spread in the posterior, as captured in $\mu_n, R_n$, and $m$. This discrepancy is then averaged over the total number of observations. For multiple groups, we can calculate this discrepancy measure for each group separately, and average over the total number of observations. Denote the final, combined $\beta_0$ by $\beta_t$. Adding subscripts $j$ to denote the respective parameters $\mu$, $\mu_n$, $R_n$ and $m$ for each group, it is found by
+\begin{align*}
+m_t & = \sum_{j=1}^{J} m_j, \\
+\beta_t & =  -  \frac{1}{m_t} \sum_{j=1}^{J} R_{nj} \cos (\mu_j - \mu_{nj}).
+\end{align*}
+
+Then, again, the algorithm as provided by \citet{forbes2014fast} can be applied, where $\beta_t$ is used in place of $\beta_0$, and $\eta = m_t$. 
+
+\bibliographystyle{apacite}
+\bibliography{C:/Dropbox/LiteratureCircular/CircularData}
+
+\end{document}
