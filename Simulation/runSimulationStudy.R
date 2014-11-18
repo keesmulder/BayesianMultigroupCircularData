@@ -49,7 +49,10 @@ simulationStudyVM(samplername="VMMH", Q=Q, ns=ns, kappas=kps, nsim=nsim, J=3)
 # datasets.
 
 # J=1
+<<<<<<< HEAD
 set.seed(367628)
+=======
+>>>>>>> a48c00617bb1750380a60aa61cf88141ca6aacf8
 simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=0.5, Q=Q, J=1, lag=2)
 simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=5,   Q=Q, J=1, lag=25)
 
@@ -61,7 +64,10 @@ simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=5,   Q=Q, J=1, lag
 
 
 # J=3
+<<<<<<< HEAD
 set.seed(891246)
+=======
+>>>>>>> a48c00617bb1750380a60aa61cf88141ca6aacf8
 simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=0.5, Q=Q, J=3, lag=9)
 simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=5,   Q=Q, J=3, lag=60)
 
