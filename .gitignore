@@ -1,8 +1,8 @@
-cache/*
-figure/*
-Submissions/*
-Spread/Article/Submissions/*
-Datasets/*
+cache/
+figure/
+Submissions/
+Spread/Article/Submissions/
+Datasets/
 *.csv
 *.rda
 *.bbl
