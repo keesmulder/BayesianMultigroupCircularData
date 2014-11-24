@@ -100,9 +100,9 @@ addZeros <- function(chvec, digits=2) {
 
 
 # Get datasets for testing errors.
-thget <- function(i, J=3, kappa=.1, n=5, wd=paste0(getwd(), "/(2) Data/Datasets")) {
-  if (wd!="") setwd(wd)
-  readfilename <- paste0("/Datasets_",
+thget <- function(i, J=3, kappa=.1, n=5, wd=NULL) {
+  if (!is.null(wd)) setwd(wd)
+  readfilename <- paste0("Data/Datasets/Datasets_",
                          "J=", J, "_n=", n, "_kap=", kappa, "/nr", i, ".csv")
   th <- read.table(readfilename, sep=",")
   th

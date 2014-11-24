@@ -154,6 +154,9 @@ Rcpp::List FMC(Rcpp::List th, double kp_start,
     cont = TRUE;
     do {
 
+      // Save the number of candidates
+      candidates = candidates + 1;
+
       // Draw values from the gamma distribution with the
       // tweaked parameters
       x = rgamma(1, eta * alph + 1, 1.0 / (eta * beta))[0];
@@ -167,9 +170,6 @@ Rcpp::List FMC(Rcpp::List th, double kp_start,
         v1 = log(u) / eta - (beta - b0) * (kp_new - k0);
         v2 = alph * log((kp_new+eps) / (k0 + eps)) - c5;
         v  = v1 + v2;
-
-        // Save the number of candidates
-        candidates = candidates + 1;
 
         // Break the loop if these tests are passed.
         if (kp_new < 0.258 || v < c6) {

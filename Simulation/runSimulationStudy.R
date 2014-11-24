@@ -15,20 +15,20 @@
 source('Simulation/SimulationStudyVM.R')
 source('Data/GenerateData.R')
 
-nsim <- 5
+nsim <- 1000
 
 # Generate the data.
 set.seed(8921747)
+Q <- 10000
 ns  <- c(5, 30, 100)
-kps <- c(0.5, 5, 25)
-generateVonMisesData(nsim, ns=ns, kaps=kps, J=c(1,3))
+kps <- c(0.1, 4, 32)
+generateVonMisesData(nsim, ns=ns, kaps=kps, J=c(1, 3))
 
 
 # The rejection and MH samplers are straightforward to simulate as they do not
 # require seperate values for lag for each cell.
 
 # J=1
-Q <- 10000
 
 set.seed(105843)
 simulationStudyVM(samplername="FM",   Q=Q, ns=ns, kappas=kps, nsim=nsim, J=1)
@@ -37,8 +37,8 @@ set.seed(190362)
 simulationStudyVM(samplername="VMMH", Q=Q, ns=ns, kappas=kps, nsim=nsim, J=1)
 
 # J=3
-set.seed(215427)
-simulationStudyVM(samplername="FM",   Q=Q, ns=ns, kappas=kps, nsim=nsim, J=3)
+set.seed(215428)
+simulationStudyVM(samplername="FM",   Q=Q, ns=ns, kappas=kps, nsim=nsim, J=3, printsim=TRUE)
 
 set.seed(353397)
 simulationStudyVM(samplername="VMMH", Q=Q, ns=ns, kappas=kps, nsim=nsim, J=3)
@@ -49,33 +49,37 @@ simulationStudyVM(samplername="VMMH", Q=Q, ns=ns, kappas=kps, nsim=nsim, J=3)
 # datasets.
 
 # J=1
-<<<<<<< HEAD
 set.seed(367628)
-=======
->>>>>>> a48c00617bb1750380a60aa61cf88141ca6aacf8
-simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=0.5, Q=Q, J=1, lag=2)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=5,   Q=Q, J=1, lag=25)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=0.1, Q=Q, J=1, lag=2, printsim=TRUE)
+set.seed(941321)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=4,   Q=Q, J=1, lag=25, printsim=TRUE)
 
-simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=0.5, Q=Q, J=1, lag=3)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=5,   Q=Q, J=1, lag=30)
+set.seed(758945)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=0.1, Q=Q, J=1, lag=3, printsim=TRUE)
+set.seed(711397)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=4,   Q=Q, J=1, lag=30, printsim=TRUE)
 
-simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=0.5, Q=Q, J=1, lag=10)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=5,   Q=Q, J=1, lag=150)
+set.seed(222638)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=0.1, Q=Q, J=1, lag=10, printsim=TRUE)
+set.seed(117440)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=4,   Q=Q, J=1, lag=150, printsim=TRUE)
 
 
 # J=3
-<<<<<<< HEAD
 set.seed(891246)
-=======
->>>>>>> a48c00617bb1750380a60aa61cf88141ca6aacf8
-simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=0.5, Q=Q, J=3, lag=9)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=5,   Q=Q, J=3, lag=60)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=0.1, Q=Q, J=3, lag=9, printsim=TRUE)
+set.seed(419283)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=5,   kappas=4,   Q=Q, J=3, lag=60, printsim=TRUE)
 
-simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=0.5, Q=Q, J=3, lag=10)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=5,   Q=Q, J=3, lag=65)
+set.seed(845006)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=0.1, Q=Q, J=3, lag=10, printsim=TRUE)
+set.seed(895087)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=4,   Q=Q, J=3, lag=65, printsim=TRUE)
 
-simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=0.5, Q=Q, J=3, lag=35)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=5,   Q=Q, J=3, lag=250)
+set.seed(621705)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=0.1, Q=Q, J=3, lag=35, printsim=TRUE)
+set.seed(800436)
+simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=4,   Q=Q, J=3, lag=250, printsim=TRUE)
 
 
 
