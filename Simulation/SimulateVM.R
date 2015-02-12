@@ -161,9 +161,7 @@ simulateVM <- function (nsim, n, kappa, J, meandif, Q,
       # Normal confidence interval (based on the median/quantile).
       kap_post_CI[i, ]     <- quantile(res$kappa, probs = probs)
 
-      # The Highest Density Interval (HDI), a CI for the mode. I am unsure as to
-      # how trustworthy this is with small samples and prob=.95, but I suppose
-      # with 0.50 or something it should work fairly well.
+      # The Highest Density Interval (HDI), a CI for the mode.
       kap_post_HDI[i, ]    <- hmodeci(res$kappa, cip=prob)
       true_kap_in_CI[i]    <- (kappa > kap_post_CI[i, 1] &
                                  kappa < kap_post_CI[i, 2])

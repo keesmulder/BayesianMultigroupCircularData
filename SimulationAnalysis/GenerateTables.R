@@ -55,7 +55,7 @@ rlj3 <- list(DW=DWj3,
 dn <- dimnames(rlj1[[1]])
 nmeth <- length(rlj1)
 
-
+str(ssr)
 
 
 
@@ -85,8 +85,8 @@ accfoot <- "\\footnote{Acceptance ratio. For Gibbs sampling, this is always 1. F
 mctfoot <- "\\footnote{Mean Computation Time of one replication in seconds.}"
 
 # Filenames for the outputfiles
-j1file <- "(5) Code for analysis/j1table.tex"
-j3file <- "(5) Code for analysis/j3table.tex"
+j1file <- "Spread/Tables/j1table.tex"
+j3file <- "Spread/Tables/j3table.tex"
 
 
 # Place the table

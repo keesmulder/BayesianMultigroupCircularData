@@ -51,6 +51,14 @@ Rcpp algorithm to calculate the highest density interval (`hmodeci()`) and the m
 
 Contains all the code necessary to analyze the generated data repeatedly with some MCMC sampler. 
 
+### `ChoosingZSimulationStudy.R`
+
+Contains code for the small simulation study that was performed for the Gibbs sampler under "Choosing Z".
+
+### `DW_chosen_k_sampler.R`, `DW_chosen_k_sampler.cpp`
+
+A special version of the Gibbs sampler that returns results relevant for the simulation study. 
+
 ### `SimulateVM.R`
 
 Simulates a single cell.
