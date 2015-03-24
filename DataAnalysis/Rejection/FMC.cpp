@@ -19,7 +19,7 @@ using namespace Rcpp;
 // [[Rcpp::depends(BH)]]
 #include <boost/math/special_functions/bessel.hpp>
 
-
+// [[Rcpp::export]]
 NumericVector rvmc(int n, double mu, double kp) {
   /* FUNCTION rvmc -------------------------------------------
   Generate random variates from the von Mises distribution.
@@ -31,11 +31,19 @@ NumericVector rvmc(int n, double mu, double kp) {
   Returns: A vector of length n containing VM random variates.
   ------------------------------------------------------------ */
 
+  // If kappa is very small, return a circular uniform draw, as otherwise the
+  // algorithm will fail.
+  if (kp < .0000001) {
+      return runif(n, 0, 4.0*atan(1));
+  }
+
+  // Main algorithm.
   NumericVector th(n);
   int sn;
   double a, b, r, u1, u2, u3, z, f, c;
   bool cont;
 
+  // Setup.
   a = 1 + sqrt(1 + 4.0 * pow(kp, 2));
   b = (a - (sqrt(2.0*a)))/(2.0*kp);
   r = (1 + pow(b,2))/(2.0*b);

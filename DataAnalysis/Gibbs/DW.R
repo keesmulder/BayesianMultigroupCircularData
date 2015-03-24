@@ -27,7 +27,7 @@ getLambda        <- function (k) factorial(k)^-2 * 0.5^(2*k)
 
 DW <- function(th, R_0=rep(0, length(th)), mu_0=rep(0, length(th)),
                c=rep(0, length(th)), Q=10000, burn=0, lag = 1,
-               mu_start = 0, kp_start = 2, start_w = 4, Z = 85) {
+               mu_start = 0, kp_start = 2, start_w = 4, Z = 25) {
   # FUNCTION DW ------------------------------------------------------------
   # th: The circular data supplied as radians, in a list with one
   #     group per item in the list.

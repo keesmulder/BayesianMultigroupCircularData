@@ -50,11 +50,16 @@ kps <- c(0.1, 4, 32)
 # simulationStudyVM(samplername="VMMH", Q=Q, ns=ns, kappas=kps, nsim=nsim, J=1, printsim=TRUE)
 
 # J=3
-set.seed(215430)
-simulationStudyVM(samplername="FM",   Q=Q, ns=ns, kappas=kps, nsim=nsim, J=3, printsim=TRUE)
 
-set.seed(353397)
-simulationStudyVM(samplername="VMMH", Q=Q, ns=ns, kappas=kps, nsim=nsim, J=3, printsim=TRUE)
+
+
+# Not done yet
+
+# set.seed(215431)
+# simulationStudyVM(samplername="FM",   Q=Q, ns=ns, kappas=kps, nsim=nsim, J=3, printsim=TRUE)
+#
+# set.seed(353397)
+# simulationStudyVM(samplername="VMMH", Q=Q, ns=ns, kappas=kps, nsim=nsim, J=3, printsim=TRUE)
 
 
 
@@ -62,20 +67,20 @@ simulationStudyVM(samplername="VMMH", Q=Q, ns=ns, kappas=kps, nsim=nsim, J=3, pr
 # datasets.
 
 # J=1
-set.seed(367628)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=10,   kappas=0.1, Q=Q, J=1, lag=2, printsim=TRUE)
-set.seed(941321)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=10,   kappas=4,   Q=Q, J=1, lag=25, printsim=TRUE)
-
-set.seed(758945)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=0.1, Q=Q, J=1, lag=3, printsim=TRUE)
-set.seed(711397)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=4,   Q=Q, J=1, lag=30, printsim=TRUE)
-
-set.seed(222638)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=0.1, Q=Q, J=1, lag=10, printsim=TRUE)
-set.seed(117440)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=4,   Q=Q, J=1, lag=150, printsim=TRUE)
+# set.seed(367628)
+# simulationStudyVM(samplername="DW", nsim=nsim, ns=10,   kappas=0.1, Q=Q, J=1, lag=2, printsim=TRUE)
+# set.seed(941321)
+# simulationStudyVM(samplername="DW", nsim=nsim, ns=10,   kappas=4,   Q=Q, J=1, lag=25, printsim=TRUE)
+#
+# set.seed(758945)
+# simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=0.1, Q=Q, J=1, lag=3, printsim=TRUE)
+# set.seed(711397)
+# simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=4,   Q=Q, J=1, lag=30, printsim=TRUE)
+#
+# set.seed(222638)
+# simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=0.1, Q=Q, J=1, lag=10, printsim=TRUE)
+# set.seed(117440)
+# simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=4,   Q=Q, J=1, lag=150, printsim=TRUE)
 
 
 # J=3
@@ -91,6 +96,7 @@ simulationStudyVM(samplername="DW", nsim=nsim, ns=30,  kappas=4,   Q=Q, J=3, lag
 
 set.seed(621705)
 simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=0.1, Q=Q, J=3, lag=35, printsim=TRUE)
+
 set.seed(800436)
 simulationStudyVM(samplername="DW", nsim=nsim, ns=100, kappas=4,   Q=Q, J=3, lag=250, printsim=TRUE)
 
