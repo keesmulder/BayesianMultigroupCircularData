@@ -45,7 +45,7 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
   FUN <- get(samplername)
 
   # Do a quick testrun to get colnames, dimensions.
-  testrun <- simulateVM(nsim=1, n=5, kappa=kappas[1],
+  testrun <- simulateVM(nsim=1, n=ns[1], kappa=kappas[1],
                         J=J, meandif=meandifs[1],
                         Q=5, burn=1, FUN=FUN)
 
