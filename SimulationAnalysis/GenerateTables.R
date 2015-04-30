@@ -14,21 +14,42 @@ source('SimulationAnalysis/analysisHelperFunctions.R')
 source("DataAnalysis/DescribeCirc.R")
 
 # LOAD IN DATA
+oldwd <- getwd()
+
 setwd("Simulation/Results/")
 
 # Combine DW data
-DWj1k.1 <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 10.13.18].rda",
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 12.40.49].rda",
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 16.33.55].rda"), onDim=3)
-DWj1k4  <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 12.20.54].rda",
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 15.27.03].rda",
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-17 15.46.11].rda"), onDim=3)
-DWj3k.1 <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 10.22.35].rda",
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 16.20.13].rda",
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 23.02.41].rda"), onDim=3)
-DWj3k4  <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 15.59.14].rda",
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 21.58.57].rda",
-                        "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-18 02.54.39].rda"), onDim=3)
+# Old
+# DWj1k.1 <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 10.13.18].rda",
+#                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 12.40.49].rda",
+#                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 16.33.55].rda"), onDim=3)
+# DWj1k4  <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 12.20.54].rda",
+#                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-20 15.27.03].rda",
+#                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2014-04-17 15.46.11].rda"), onDim=3)
+# DWj3k.1 <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 10.22.35].rda",
+#                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 16.20.13].rda",
+#                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 23.02.41].rda"), onDim=3)
+# DWj3k4  <- combineRes(c("[SimResultVM_v6]__[nsim1000]__[DW]__[n5]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 15.59.14].rda",
+#                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n30]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-20 21.58.57].rda",
+#                         "[SimResultVM_v6]__[nsim1000]__[DW]__[n100]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2014-04-18 02.54.39].rda"), onDim=3)
+
+
+DWj1k.1 <- combineRes(c("[SimResultVM_v6]__[nsim2000]__[DW]__[n10]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2015-02-12 17.52.51].rda",
+                        "[SimResultVM_v6]__[nsim2000]__[DW]__[n30]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2015-02-12 23.52.18].rda",
+                        "[SimResultVM_v6]__[nsim2000]__[DW]__[n100]__[k0.1]__[mudif0.35]__[J1]__[Q10000]__[2015-02-13 08.18.43].rda"), onDim=3)
+
+DWj1k4  <- combineRes(c("[SimResultVM_v6]__[nsim2000]__[DW]__[n10]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2015-02-12 23.14.43].rda",
+                        "[SimResultVM_v6]__[nsim2000]__[DW]__[n30]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2015-02-13 06.17.10].rda",
+                        "[SimResultVM_v6]__[nsim2000]__[DW]__[n100]__[k4]__[mudif0.35]__[J1]__[Q10000]__[2015-02-14 16.20.29].rda"), onDim=3)
+
+
+DWj3k.1 <- combineRes(c("[SimResultVM_v6]__[nsim2000]__[DW]__[n10]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2015-03-04 13.45.49].rda",
+                        "[SimResultVM_v6]__[nsim2000]__[DW]__[n30]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2015-04-07 22.20.44].rda",
+                        "[SimResultVM_v6]__[nsim2000]__[DW]__[n100]__[k0.1]__[mudif0.35]__[J3]__[Q10000]__[2015-04-08 11.24.59].rda"), onDim=3)
+
+DWj3k4  <- combineRes(c("[SimResultVM_v6]__[nsim2000]__[DW]__[n10]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2015-03-13 13.35.26].rda",
+                        "[SimResultVM_v6]__[nsim2000]__[DW]__[n30]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2015-04-08 06.46.31].rda",
+                        "[SimResultVM_v6]__[nsim2000]__[DW]__[n100]__[k4]__[mudif0.35]__[J3]__[Q10000]__[2015-04-08 14.54.44].rda"), onDim=3)
 
 # Make an empty result set to put in instead of k=32
 DWNAj1       <- DWj1k4
@@ -45,19 +66,21 @@ DWj3 <- abind(DWj3k.1, DWj3k4, DWNAj3, along=4)
 
 # Combine DW data with MH and FM data.
 rlj1 <- list(DW=DWj1,
-             MH=loadssres("[SimResultVM_v6]__[nsim1000]__[VMMH]__[n5,30,100]__[k0.1,1,4,16,32]__[mudif0.35]__[J1]__[Q10000]__[2014-04-14 20.07.44].rda"),
-             FM=loadssres("[SimResultVM_v6]__[nsim1000]__[FM]__[n5,30,100]__[k0.1,1,4,16,32]__[mudif0.35]__[J1]__[Q10000]__[2014-04-15 15.55.19].rda"))
+             MH=loadssres("[SimResultVM_v6]__[nsim2000]__[VMMH]__[n10,30,100]__[k0.1,4,32]__[mudif0.35]__[J1]__[Q10000]__[2015-02-12 14.17.02].rda"),
+             FM=loadssres("[SimResultVM_v6]__[nsim2000]__[FM]__[n10,30,100]__[k0.1,4,32]__[mudif0.35]__[J1]__[Q10000]__[2015-02-12 13.54.02].rda"))
 rlj3 <- list(DW=DWj3,
-             MH=loadssres("[SimResultVM_v6]__[nsim1000]__[VMMH]__[n5,30,100]__[k0.1,1,4,16,32]__[mudif0.35]__[J3]__[Q10000]__[2014-04-16 19.12.42].rda"),
-             FM=loadssres("[SimResultVM_v6]__[nsim1000]__[FM]__[n5,30,100]__[k0.1,1,4,16,32]__[mudif0.35]__[J3]__[Q10000]__[2014-04-16 16.24.55].rda"))
+             MH=loadssres("[SimResultVM_v6]__[nsim2000]__[VMMH]__[n10,30,100]__[k0.1,4,32]__[mudif0.35]__[J3]__[Q10000]__[2015-02-12 17.26.15].rda"),
+             FM=loadssres("[SimResultVM_v6]__[nsim2000]__[FM]__[n10,30,100]__[k0.1,4,32]__[mudif0.35]__[J3]__[Q10000]__[2015-02-14 22.57.45].rda"))
 
 # Save dimension names and number of methods
 dn <- dimnames(rlj1[[1]])
 nmeth <- length(rlj1)
 
-str(ssr)
+str(rlj3)
 
-
+mean(rlj3$MH[, 39, 1, 1, 1])
+mean(rlj3$MH[, 39, 1, 2, 1])
+rlj3$MH[, 39, 1, 1, 1]
 
 # CREATE TABLES
 # Create comparison tables.
@@ -88,6 +111,8 @@ mctfoot <- "\\footnote{Mean Computation Time of one replication in seconds.}"
 j1file <- "Spread/Tables/j1table.tex"
 j3file <- "Spread/Tables/j3table.tex"
 
+
+setwd(oldwd)
 
 # Place the table
 capture.output({
@@ -147,3 +172,33 @@ capture.output({
 }, file=j3file)
 
 
+
+
+j3resbigmoredigits <- comparisontable(rl=rlj3, J=3, fnames=c("DW", "MH", "FM"), ks=c("0.1", "4", "32"),digits=6)
+
+# Average coverages per group
+j3resmoredigits <- cbind(j3resbigmoredigits[, 1:6], round(rowMeans(apply(j3resbigmoredigits[, 7:9], 2, as.numeric)), 2), j3resbigmoredigits[, 10:13])
+
+
+MHcov <- data.frame(n=rep(c(10, 30, 100), each=9),
+                    kappa=factor(paste("kappa =", rep(c(0.1, 4, 32), times=3, each=3)), levels = paste("kappa =", c(0.1, 4, 32))),
+                    #paste("kappa =", rep(c(0.1, 4, 32), times=3, each=3)),
+                    Method=c("Gibbs", "MH", "Rejection"),
+                    Coverage=as.numeric(j3resmoredigits[, c("Kap true in HDI")]), StringsAsFactors=FALSE)
+
+MHcov[is.nan(MHcov[,4]),4] <- NA
+
+require(ggplot2)
+require(grid)
+
+setwd("C:/Dropbox/Masterthesis/Writing/Kees/Thesis")
+scale <- 0.8
+pdf("Coverages.pdf", width=12*scale, height=5.5*scale)
+
+ggplot(data=MHcov, aes(y=Coverage, x=n, shape=Method, group=Method)) +
+  geom_line() + geom_point(size=3) + xlab("n") + ylab("Coverage") + theme_classic() +
+  ggtitle("") +
+  facet_wrap(~kappa) + geom_line(y=.95, color="black") +
+  theme(panel.margin = unit(2, "lines")) +
+  scale_x_continuous(breaks=c(10, 30, 100))
+dev.off()

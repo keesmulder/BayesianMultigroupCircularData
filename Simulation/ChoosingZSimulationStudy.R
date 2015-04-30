@@ -38,7 +38,7 @@ runSimStudyK <- function (ns, kps, J, nrep, seed) {
 # Set simulation conditions.
 nrep <- 100
 kps  <- c(0.1, 1, 4, 8, 16, 32)
-ns   <- c(5, 30, 100)
+ns   <- c(10, 30, 100)
 
 resultj1 <- runSimStudyK(ns=ns, kps=kps, J=1, nrep=nrep, seed=25)
 resultj3 <- runSimStudyK(ns=ns, kps=kps, J=3, nrep=nrep, seed=26)

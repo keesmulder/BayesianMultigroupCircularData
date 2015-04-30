@@ -84,8 +84,8 @@ kps <- c(0.1, 4, 32)
 
 
 # J=3
-set.seed(891246)
-simulationStudyVM(samplername="DW", nsim=nsim, ns=10,   kappas=0.1, Q=Q, J=3, lag=9, printsim=TRUE)
+# set.seed(891246)
+# simulationStudyVM(samplername="DW", nsim=nsim, ns=10,   kappas=0.1, Q=Q, J=3, lag=9, printsim=TRUE)
 set.seed(419283)
 simulationStudyVM(samplername="DW", nsim=nsim, ns=10,   kappas=4,   Q=Q, J=3, lag=60, printsim=TRUE)
 

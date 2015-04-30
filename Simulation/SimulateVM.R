@@ -25,7 +25,7 @@ Rcpp::sourceCpp("Data/rvmc.cpp")
 # Perform simulations.
 simulateVM <- function (nsim, n, kappa, J, meandif, Q,
                         burn, lag=1, FUN, prob = .95, printsim=FALSE,
-                        wd = getwd(), ...) {
+                        wd = getwd(), TEMPfilename, ...) {
   # FUNCTION simulateVM ----------------------------------------------------
   # nsim: The number of datasets to read in. These must have been generated
   #       beforehand.
@@ -48,35 +48,55 @@ simulateVM <- function (nsim, n, kappa, J, meandif, Q,
   # The probabilities used later for CCI's.
   probs <- c((1-prob)/2, 1-(1-prob)/2)
 
-  # Create room for output.
-  # Results to be saved for each group
-  sample_mean_directions <- mu_post_mean <- sample_approx_kaps <-
-    LB_mean_CCI <- UB_mean_CCI <- true_mean_in_CCI <- matrix(NA, nrow=nsim, ncol=J)
-
-  colnames(sample_mean_directions) <- paste0("Sample mean gr ", 1:J)
-  colnames(mu_post_mean)           <- paste0("Posterior mean gr ", 1:J)
-  colnames(sample_approx_kaps)     <- paste0("Sample approx kap gr ", 1:J)
-  colnames(LB_mean_CCI)            <- paste0("LB ", prob*100, "% Mean CCI gr ", 1:J)
-  colnames(UB_mean_CCI)            <- paste0("UB ", prob*100, "% Mean CCI gr ", 1:J)
-  colnames(true_mean_in_CCI)       <- paste0("True mean in ", prob*100, "% CCI gr ", 1:J)
-
-  # Results to be saved in a nsim*2 matrix.
-  kap_post_HDI <- kap_post_CI <- matrix(nrow=nsim, ncol=2)
-  colnames(kap_post_CI)  <- paste0("Kap post ", prob*100, "% CI ", c("LB", "UB"))
-  colnames(kap_post_HDI) <- paste0("Kap post ", prob*100, "% HDI ", c("LB", "UB"))
-
-  # Results to be saved in a vector.
-  ct <- crashed <- centred_approxKappaML <- true_kap_in_CI <- true_kap_in_HDI  <-
-    R_n_post <- kap_post_mean <- kap_post_median <-  kap_post_mode.1 <- kap_post_mode.05 <-
-    kap_post_mode.01 <- acceptance <- rep(NA, nsim)
-
   # The true means.
   true_means <- (meandif*1:J)%%(2*pi)
 
   # Under the uninformative prior, all prior properties are zero.
   n0 <- rep(0, J)
 
-  for (i in 1:nsim){
+  # Check for TEMP-file.
+  if(!is.na(TEMPfilename) && file.exists(TEMPfilename)) {
+    # If there is one, load it.
+    load(TEMPfilename)
+
+    # Replace them with the existing ones.
+    for(li in 1:length(tempresult)) {
+      assign(names(tempresult)[li], tempresult[[li]])
+    }
+
+    # Select where to pick up again.
+    start <- sum(!is.na(true_kap_in_HDI)) + 1
+    cat("Picking up again at (", start, ")")
+
+    # Otherwise, make room for new output
+  } else {
+
+    # Create room for output.
+    # Results to be saved for each group
+    sample_mean_directions <- mu_post_mean <- sample_approx_kaps <-
+      LB_mean_CCI <- UB_mean_CCI <- true_mean_in_CCI <- matrix(NA, nrow=nsim, ncol=J)
+
+    colnames(sample_mean_directions) <- paste0("Sample mean gr ", 1:J)
+    colnames(mu_post_mean)           <- paste0("Posterior mean gr ", 1:J)
+    colnames(sample_approx_kaps)     <- paste0("Sample approx kap gr ", 1:J)
+    colnames(LB_mean_CCI)            <- paste0("LB ", prob*100, "% Mean CCI gr ", 1:J)
+    colnames(UB_mean_CCI)            <- paste0("UB ", prob*100, "% Mean CCI gr ", 1:J)
+    colnames(true_mean_in_CCI)       <- paste0("True mean in ", prob*100, "% CCI gr ", 1:J)
+
+    # Results to be saved in a nsim*2 matrix.
+    kap_post_HDI <- kap_post_CI <- matrix(nrow=nsim, ncol=2)
+    colnames(kap_post_CI)  <- paste0("Kap post ", prob*100, "% CI ", c("LB", "UB"))
+    colnames(kap_post_HDI) <- paste0("Kap post ", prob*100, "% HDI ", c("LB", "UB"))
+
+    # Results to be saved in a vector.
+    ct <- crashed <- centred_approxKappaML <- true_kap_in_CI <- true_kap_in_HDI  <-
+      R_n_post <- kap_post_mean <- kap_post_median <-  kap_post_mode.1 <- kap_post_mode.05 <-
+      kap_post_mode.01 <- acceptance <- rep(NA, nsim)
+
+    start <- 1
+  }
+
+  for (i in start:nsim){
     if (printsim) cat(i, "-", sep="")
 
     res <- list(mu =  matrix(NA, nrow=Q, ncol=J), kappa = rep(NA, Q), spec=list())
@@ -169,6 +189,29 @@ simulateVM <- function (nsim, n, kappa, J, meandif, Q,
                                  kappa < kap_post_HDI[i, 2])
 
 
+      # Intermediate save
+      tempresult <- list(sample_mean_directions=sample_mean_directions,
+                         mu_post_mean=mu_post_mean,
+                         LB_mean_CCI=LB_mean_CCI,
+                         UB_mean_CCI=UB_mean_CCI,
+                         true_mean_in_CCI=true_mean_in_CCI,
+                         sample_approx_kaps=sample_approx_kaps,
+                         centred_approxKappaML=centred_approxKappaML,
+                         kap_post_mean=kap_post_mean,
+                         kap_post_median=kap_post_median,
+                         kap_post_mode.1=kap_post_mode.1,
+                         kap_post_mode.05=kap_post_mode.05,
+                         kap_post_mode.01=kap_post_mode.01,
+                         kap_post_CI=kap_post_CI,
+                         kap_post_HDI=kap_post_HDI,
+                         true_kap_in_CI=true_kap_in_CI,
+                         true_kap_in_HDI=true_kap_in_HDI,
+                         R_n_post=R_n_post,
+                         acceptance=acceptance,
+                         crashed=crashed,
+                         ct=ct)
+
+      save(tempresult, file=TEMPfilename)
 
     }
   }

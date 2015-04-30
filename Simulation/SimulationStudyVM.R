@@ -44,11 +44,20 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
   # Get the function
   FUN <- get(samplername)
 
+  # Name for the temporary file
+  TEMPfilename <- filename <- paste("Simulation/Results/[TEMPResultVM",
+                                    paste0("nsim", nsim),
+                                    samplername,
+                                    paste0("n", paste(ns, collapse=",")),
+                                    paste0("k", paste(kappas, collapse=",")),
+                                    paste0("mudif", paste(round(meandifs,2), collapse=",")),
+                                    paste0("J", J), paste0("Q", Q, "].rda"), sep = ",")
+
+
   # Do a quick testrun to get colnames, dimensions.
   testrun <- simulateVM(nsim=1, n=ns[1], kappa=kappas[1],
                         J=J, meandif=meandifs[1],
-                        Q=5, burn=1, FUN=FUN)
-
+                        Q=5, burn=1, FUN=FUN, testrun = TRUE, TEMPfilename=NA)
   # The dimensions of the summary and full results
   noutcome <- ncol(testrun)
 
@@ -64,6 +73,10 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
                                kappa=kappas,
                                meandif=meandifs))
 
+
+
+  cat(TEMPfilename)
+
   # Run simulateVM for each scenario.
   for (n in ns) {
     for (kappa in kappas) {
@@ -78,7 +91,8 @@ simulationStudyVM <- function (samplername, nsim, ns=c(5, 30, 100), kappas=c(0.1
             as.character(kappa),
             as.character(meandif)] <-
           simulateVM(nsim=nsim, n=n, kappa=kappa, J=J, meandif=meandif,
-                     Q=Q, burn=burn, lag=lag, FUN=FUN, printsim=printsim, ...)
+                     Q=Q, burn=burn, lag=lag, FUN=FUN, printsim=printsim,
+                     TEMPfilename=TEMPfilename, ...)
       }
     }
   }

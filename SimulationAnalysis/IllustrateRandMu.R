@@ -84,6 +84,8 @@ th <- c( 1.35, -0.28, 0.97)
 scale <- 0.55
 pdf("ExampleRMu.pdf", width=12*scale, height=8*scale)
 plotExampleRMu(th, r=0.8)
+plotExampleRMu(rvonmises(50, 3, 4), r=0.3)
+plotExampleRMu(c( 1.35, -3.28, 1.97), r=0.5)
 dev.off()
 
 round(th%%(2*pi)*(180/pi), 0)
