@@ -63,7 +63,7 @@ print(xtable(combres, digits=0, align=c("c@{\\hskip 0.7cm}", "c", "c", "c", "c@{
        add.to.row=list(pos     = as.list(c(-1, -1, -1, 0, nrow(combres))),
                        command = c("\\toprule \n  & & $J=1$ & & & & $J=3$ & \\\\ \n",
                                    " & \\multicolumn{3}{c}{Sample size} & & \\multicolumn{3}{c}{Sample size} \\\\ \n",
-                                   " $\\kappa$ & 5 & 30 & 100 & & 5 & 30 & 100 \\\\ \n",
+                                   " $\\kappa$ & 10 & 30 & 100 & & 10 & 30 & 100 \\\\ \n",
                                    "\\hline \n ",
                                    "\\bottomrule \n"))
        )
