@@ -27,8 +27,10 @@ getLambda        <- function (k) factorial(k)^-2 * 0.5^(2*k)
 DW <- function(th, R_0=rep(0, length(th)), mu_0=rep(0, length(th)),
                          c=rep(0, length(th)), Q=10000, burn=0, lag = 1,
                          mu_start = 0, kp_start = 2, start_w = 4,
-                         N_k_attempts = 85) {
+                         Z = 85) {
   if(!is.list(th)) stop("This function requires the data to be entered as a list of groups of angles.")
+
+  # print(th)
 
   # Qb is the amount of iterations plus the burn-in.
   Qb <- Q + burn
@@ -62,18 +64,15 @@ DW <- function(th, R_0=rep(0, length(th)), mu_0=rep(0, length(th)),
   # Sampled parameters
   mu <- matrix(NA, nrow = Q, ncol = J)
   kappa <- w <- as.numeric(rep(NA, Q))
-  N_k <- numeric(N_k_attempts)
+  N_k <- numeric(Z)
 
   ## Initialization --------------------
-  mu[1, ]   <- mu_start
-  w[1]      <- start_w
-  kappa[1]  <- kp_start
-  lambda    <- getLambda(1:N_k_attempts)
+  lambda    <- getLambda(1:Z)
 
   # Run the Gibbs sampler.
   out <- DWC(mu_start, start_w, kp_start,
                             lambda, mu_n, R, R_t, m,
-                            N_k_attempts, Qb+1, lag)
+                            Z, Qb+1, lag)
 
   chosenk <- out[, 1]
   kappa <- out[-(1:burn), 2]

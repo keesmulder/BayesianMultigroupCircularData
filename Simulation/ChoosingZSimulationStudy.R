@@ -6,7 +6,7 @@ require(xtable)
 # that point.
 getMaxZ <- function (kp, n, J) {
   th <- lapply(1:J, function(x) rvmc(n, 2, kp))
-  res <- DW(th, Q=10000, burn=500, N_k_attempts=85)$spec$chosenk
+  res <- DW(th, Q=10000, burn=500, Z=85)$spec$chosenk
   max(res)
 }
 
@@ -30,7 +30,8 @@ runSimStudyK <- function (ns, kps, J, nrep, seed) {
 
   # Run the simulation study.
   for (cd in cds) {
-    out[ , as.character(cd[1]), as.character(cd[2])] <- repeatGetMaxZ(n=cd[1], kp=cd[2], J=J, nrep=nrep)
+    out[ , as.character(cd[1]), as.character(cd[2])] <-
+      repeatGetMaxZ(n=cd[1], kp=cd[2], J=J, nrep=nrep)
   }
   out
 }
@@ -38,12 +39,15 @@ runSimStudyK <- function (ns, kps, J, nrep, seed) {
 # Set simulation conditions.
 nrep <- 100
 kps  <- c(0.1, 1, 4, 8, 16, 32)
+kps  <- c(0.1, 1, 4, 8, 16, 32)
 ns   <- c(10, 30, 100)
 
-resultj1 <- runSimStudyK(ns=ns, kps=kps, J=1, nrep=nrep, seed=25)
-resultj3 <- runSimStudyK(ns=ns, kps=kps, J=3, nrep=nrep, seed=26)
+# resultj1 <- runSimStudyK(ns=ns, kps=kps, J=1, nrep=nrep, seed=25)
+# resultj1 <- runSimStudyK(ns=ns, kps=kps, J=1, nrep=2, seed=25)
+resultj3 <- runSimStudyK(ns=ns, kps=kps, J=3, nrep=nrep, seed=27)
+resultj3 <- runSimStudyK(ns=ns, kps=8, J=3, nrep=nrep, seed=26)
 
-tabj1 <- t(apply(resultj1, 2:3, max))
+DWtabj1 <- t(apply(resultj1, 2:3, max))
 tabj3 <- t(apply(resultj3, 2:3, max))
 
 combres <- cbind(tabj1, rep("", 4), tabj3)
