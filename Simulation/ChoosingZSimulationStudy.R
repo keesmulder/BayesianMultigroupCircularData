@@ -48,10 +48,10 @@ save.image(file="choosingZSimStudyResults.RData")
 resultj3 <- runSimStudyK(ns=ns, kps=kps, J=3, nrep=nrep, seed=27)
 save.image(file="choosingZSimStudyResults.RData")
 
-DWtabj1 <- t(apply(resultj1, 2:3, max))
+tabj1 <- t(apply(resultj1, 2:3, max))
 tabj3 <- t(apply(resultj3, 2:3, max))
 
-combres <- cbind(tabj1, rep("", 4), tabj3)
+combres <- cbind(tabj1, rep("", nrow(tabj1)), tabj3)
 
 
 # Output to LaTeX.
