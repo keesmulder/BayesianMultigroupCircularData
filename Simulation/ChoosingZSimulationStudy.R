@@ -1,4 +1,6 @@
 source('Simulation/DW_chosen_k_sampler.R')
+sourceCpp('Data/rvmc.cpp')
+
 require(xtable)
 
 # Z is the maximum number of N_k that was selected by the algorithm: if we never
@@ -6,14 +8,14 @@ require(xtable)
 # that point.
 getMaxZ <- function (kp, n, J) {
   th <- lapply(1:J, function(x) rvmc(n, 2, kp))
-  res <- DW(th, Q=10000, burn=500, Z=85)$spec$chosenk
+  res <- DW(th, Q=10000, burn=500, Z=40)$spec$chosenk
   max(res)
 }
 
 repeatGetMaxZ <- function (n, kp, J, nrep) {
-  print(paste(n, kp, J, nrep))
+  cat("\n\n\nCell: [[", paste(n, kp, J, nrep), "]], datasets:\n", sep="")
   sapply(1:nrep, function(x) {
-    cat(x, " ")
+    cat(x, ", ", sep = "")
     getMaxZ(kp=kp, n=n, J=J)
     }
   )
@@ -39,13 +41,12 @@ runSimStudyK <- function (ns, kps, J, nrep, seed) {
 # Set simulation conditions.
 nrep <- 100
 kps  <- c(0.1, 1, 4, 8, 16, 32)
-kps  <- c(0.1, 1, 4, 8, 16, 32)
 ns   <- c(10, 30, 100)
 
-# resultj1 <- runSimStudyK(ns=ns, kps=kps, J=1, nrep=nrep, seed=25)
-# resultj1 <- runSimStudyK(ns=ns, kps=kps, J=1, nrep=2, seed=25)
+resultj1 <- runSimStudyK(ns=ns, kps=kps, J=1, nrep=nrep, seed=25)
+save.image(file="choosingZSimStudyResults.RData")
 resultj3 <- runSimStudyK(ns=ns, kps=kps, J=3, nrep=nrep, seed=27)
-resultj3 <- runSimStudyK(ns=ns, kps=8, J=3, nrep=nrep, seed=26)
+save.image(file="choosingZSimStudyResults.RData")
 
 DWtabj1 <- t(apply(resultj1, 2:3, max))
 tabj3 <- t(apply(resultj3, 2:3, max))
