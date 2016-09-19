@@ -29,7 +29,7 @@ double hmode(NumericVector x, double cip) {
   x:      Sample from which to estimate the mode.
   cip:    Bandwith for the algorithm, ranging from 0 to 1.
 
-  Returns: An scalar containing the estimate of the mode.
+  Returns: A scalar containing the estimate of the mode.
   ------------------------------------------------------------ */
 
   int n, cil, chiv;

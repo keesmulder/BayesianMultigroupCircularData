@@ -34,7 +34,7 @@ NumericVector rvmc(int n, double mu, double kp) {
   // If kappa is very small, return a circular uniform draw, as otherwise the
   // algorithm will fail.
   if (kp < .0000001) {
-      return runif(n, 0, 4.0*atan(1));
+      return runif(n, 0, 8.0*atan(1));
   }
 
   // Main algorithm.
